@@ -158,10 +158,14 @@ section.active{display:block}
     </div>
     <div class="ctip" id="ctip"></div>
     <div class="write-box" id="writebox">
-      <h4>&#9998; How to Write &middot; Jamo Stroke Guide</h4>
-      <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin:.5rem 0">
-        <canvas id="strokeCanvas" width="130" height="130" style="border:1px solid var(--bdr);border-radius:8px;background:white;flex-shrink:0"></canvas>
-        <div id="strokeInfo" style="flex:1;min-width:140px;font-size:11px"></div>
+      <h4>&#9998; How to Write &middot; Stroke Animation</h4>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin:.5rem 0">
+        <canvas id="strokeCanvas" width="220" height="220" style="border:1px solid var(--bdr);border-radius:8px;background:white;cursor:pointer" onclick="replayAnimation()"></canvas>
+        <div style="display:flex;gap:8px">
+          <button onclick="replayAnimation()" class="nb" style="font-size:12px;padding:7px 16px">&#9654; Play again</button>
+          <button onclick="showAllStrokes()" class="nb" style="font-size:12px;padding:7px 16px">&#128065; Show all</button>
+        </div>
+        <div id="strokeInfo" style="font-size:11px;text-align:center"></div>
       </div>
     </div>
     <button class="spk" onclick="spkCur()">
@@ -643,140 +647,250 @@ function rPhrases(){
 }
 
 // ═══════════════════════════════════════════════
-// HANGUL STROKE GUIDE
-// Shows jamo breakdown + stroke direction arrows
 // ═══════════════════════════════════════════════
-
-// Hangul stroke order database
-// Each entry: { jamo, name, strokes: [{type, desc}], tip }
-const HANGUL_STROKES = {
-  // ── Consonants (초성/종성) ──────────────────────
-  'ㄱ':{name:'Giyeok',strokes:[{d:'→',s:'Horizontal stroke left to right'},{d:'↓',s:'Vertical stroke downward from right end'}],tip:'Looks like an L rotated. Two strokes: horizontal then vertical.'},
-  'ㄴ':{name:'Nieun',strokes:[{d:'↓',s:'Vertical stroke downward'},{d:'→',s:'Horizontal stroke right from bottom'}],tip:'Like the letter L. Vertical first, then horizontal at the base.'},
-  'ㄷ':{name:'Digeut',strokes:[{d:'→',s:'Top horizontal stroke'},{d:'↓',s:'Vertical stroke down from right'},{d:'→',s:'Bottom horizontal stroke'}],tip:'Like a squared C or D shape. Top horizontal, vertical, bottom horizontal.'},
-  'ㄹ':{name:'Rieul',strokes:[{d:'→↓',s:'Top: horizontal then down-right'},{d:'→',s:'Middle horizontal'},{d:'↓→',s:'Down then right at base'}],tip:'The most complex consonant — 5 strokes. Think of a zigzag path.'},
-  'ㅁ':{name:'Mieum',strokes:[{d:'↓',s:'Left vertical stroke'},{d:'→',s:'Top horizontal'},{d:'↓',s:'Right vertical stroke'},{d:'→',s:'Bottom horizontal closing'}],tip:'A square shape. Left side first, then top, right side, close at bottom.'},
-  'ㅂ':{name:'Bieup',strokes:[{d:'↓',s:'Left vertical'},{d:'↓',s:'Right vertical'},{d:'→',s:'Top horizontal connecting'},{d:'→',s:'Middle horizontal'},{d:'→',s:'Bottom horizontal'}],tip:'Like ㅁ but with an extra horizontal in the middle.'},
-  'ㅅ':{name:'Siot',strokes:[{d:'↘',s:'Left diagonal stroke down-right'},{d:'↙',s:'Right diagonal stroke down-left crossing first'}],tip:'Like a person standing — two crossing diagonal strokes. Left diagonal first.'},
-  'ㅇ':{name:'Ieung',strokes:[{d:'○',s:'Draw a full circle counterclockwise'}],tip:'A simple circle. One stroke, counterclockwise. Silent at start of syllable.'},
-  'ㅈ':{name:'Jieut',strokes:[{d:'→',s:'Top horizontal stroke'},{d:'↘',s:'Left diagonal stroke down'},{d:'↙',s:'Right diagonal crossing left'}],tip:'Like ㅅ with a hat on top. Horizontal first, then two diagonals.'},
-  'ㅊ':{name:'Chieut',strokes:[{d:'→',s:'Short top horizontal (dot-like)'},{d:'→',s:'Second horizontal below'},{d:'↘',s:'Left diagonal'},{d:'↙',s:'Right diagonal crossing'}],tip:'Like ㅈ with an extra horizontal at the top.'},
-  'ㅋ':{name:'Kieuk',strokes:[{d:'→',s:'Top horizontal stroke'},{d:'↓',s:'Middle vertical stroke'},{d:'→',s:'Bottom horizontal stroke'}],tip:'Like ㄱ with an extra horizontal in the middle. Three strokes.'},
-  'ㅌ':{name:'Tieut',strokes:[{d:'→',s:'Top horizontal'},{d:'↓',s:'Middle vertical'},{d:'→',s:'Middle horizontal'},{d:'→',s:'Bottom horizontal'}],tip:'Like ㄷ with an extra middle horizontal. Four strokes.'},
-  'ㅍ':{name:'Pieup',strokes:[{d:'↓',s:'Left vertical stroke'},{d:'→',s:'Top horizontal connecting both'},{d:'↓',s:'Right vertical stroke'},{d:'→',s:'Bottom horizontal'}],tip:'Like a fence or gate shape. Left vertical, top bar, right vertical, base bar.'},
-  'ㅎ':{name:'Hieut',strokes:[{d:'→',s:'Short top horizontal'},{d:'○',s:'Circle below'},{d:'→',s:'Horizontal through circle'}],tip:'A circle with a hat and a cross through it. Most complex single consonant.'},
-  'ㅃ':{name:'Ssang-bieup (BB)',strokes:[{d:'↓↓',s:'Two left verticals'},{d:'→→',s:'Two top horizontals'},{d:'↓↓',s:'Two right verticals'},{d:'→→',s:'Two bottoms'}],tip:'Double ㅂ — same strokes twice side by side. Tense/aspirated sound.'},
-  'ㄲ':{name:'Ssang-giyeok (GG)',strokes:[{d:'→↓',s:'First ㄱ'},{d:'→↓',s:'Second ㄱ beside it'}],tip:'Double ㄱ side by side. A tense G/K sound.'},
-  // ── Vowels (모음) ────────────────────────────────
-  'ㅏ':{name:'A',strokes:[{d:'↓',s:'Long vertical stroke downward'},{d:'→',s:'Short horizontal stroke from middle pointing right'}],tip:'Like a vertical line with a right-pointing branch. Sounds like "ah".'},
-  'ㅓ':{name:'Eo',strokes:[{d:'↓',s:'Long vertical stroke downward'},{d:'←',s:'Short horizontal stroke from middle pointing left'}],tip:'Like ㅏ but the branch points left. Sounds like "uh".'},
-  'ㅗ':{name:'O',strokes:[{d:'→',s:'Horizontal stroke'},{d:'↑',s:'Short vertical stroke upward from centre'}],tip:'Horizontal with a branch pointing up. Sounds like "oh".'},
-  'ㅜ':{name:'U',strokes:[{d:'→',s:'Horizontal stroke'},{d:'↓',s:'Short vertical stroke downward from centre'}],tip:'Like ㅗ but the branch points down. Sounds like "oo".'},
-  'ㅡ':{name:'Eu',strokes:[{d:'→',s:'Single horizontal stroke'}],tip:'Just a horizontal line. Sounds like a neutral "eu" (no English equivalent).'},
-  'ㅣ':{name:'I',strokes:[{d:'↓',s:'Single vertical stroke downward'}],tip:'Just a vertical line. Sounds like "ee".'},
-  'ㅐ':{name:'Ae',strokes:[{d:'↓',s:'Long vertical'},{d:'←',s:'Short left branch'},{d:'↓',s:'Short vertical to right of first'}],tip:'Like ㅓ with an extra vertical line to the right. Sounds like "eh".'},
-  'ㅔ':{name:'E',strokes:[{d:'↓',s:'Long vertical'},{d:'→',s:'Short right branch'},{d:'↓',s:'Short vertical to right'}],tip:'Like ㅏ with an extra vertical line to the right. Sounds like "eh".'},
-  'ㅑ':{name:'Ya',strokes:[{d:'↓',s:'Long vertical'},{d:'→',s:'Upper right branch'},{d:'→',s:'Lower right branch'}],tip:'Like ㅏ but with two branches. Sounds like "ya".'},
-  'ㅕ':{name:'Yeo',strokes:[{d:'↓',s:'Long vertical'},{d:'←',s:'Upper left branch'},{d:'←',s:'Lower left branch'}],tip:'Like ㅓ with two branches. Sounds like "yuh".'},
-  'ㅛ':{name:'Yo',strokes:[{d:'→',s:'Horizontal'},{d:'↑',s:'Left upward branch'},{d:'↑',s:'Right upward branch'}],tip:'Like ㅗ with two upward branches. Sounds like "yo".'},
-  'ㅠ':{name:'Yu',strokes:[{d:'→',s:'Horizontal'},{d:'↓',s:'Left downward branch'},{d:'↓',s:'Right downward branch'}],tip:'Like ㅜ with two downward branches. Sounds like "yu".'},
+// HANGUL STROKE GUIDE — animated
+// ═══════════════════════════════════════════════
+const JAMO_STROKES = {
+  'ㄱ':{name:'Giyeok (g/k)',s:[[20,20,80,20],[80,20,80,80]]},
+  'ㄴ':{name:'Nieun (n)',s:[[25,20,25,80],[25,80,80,80]]},
+  'ㄷ':{name:'Digeut (d/t)',s:[[20,20,80,20],[80,20,80,80],[20,80,80,80]]},
+  'ㄹ':{name:'Rieul (r/l)',s:[[20,15,75,15],[75,15,75,48],[20,48,75,48],[20,48,20,82],[20,82,80,82]]},
+  'ㅁ':{name:'Mieum (m)',s:[[20,20,20,80],[20,20,80,20],[80,20,80,80],[20,80,80,80]]},
+  'ㅂ':{name:'Bieup (b/p)',s:[[20,20,20,80],[80,20,80,80],[20,20,80,20],[20,50,80,50],[20,80,80,80]]},
+  'ㅅ':{name:'Siot (s)',s:[[50,15,20,80],[50,15,80,80]]},
+  'ㅇ':{name:'Ieung (silent)',s:[{type:'arc',cx:50,cy:50,r:32}]},
+  'ㅈ':{name:'Jieut (j)',s:[[20,25,80,25],[50,25,20,80],[50,25,80,80]]},
+  'ㅊ':{name:'Chieut (ch)',s:[[35,12,65,12],[20,30,80,30],[50,30,20,80],[50,30,80,80]]},
+  'ㅋ':{name:'Kieuk (k)',s:[[20,20,80,20],[80,20,80,80],[20,52,80,52]]},
+  'ㅌ':{name:'Tieut (t)',s:[[20,20,80,20],[80,20,80,80],[20,50,80,50],[20,80,80,80]]},
+  'ㅍ':{name:'Pieup (p)',s:[[20,25,20,75],[20,25,80,25],[80,25,80,75],[20,75,80,75]]},
+  'ㅎ':{name:'Hieut (h)',s:[[38,12,62,12],[{type:'arc',cx:50,cy:55,r:28}],[20,55,80,55]]},
+  'ㄲ':{name:'Ssang-giyeok',s:[[15,20,45,20],[45,20,45,80],[55,20,85,20],[85,20,85,80]]},
+  'ㄸ':{name:'Ssang-digeut',s:[[10,20,45,20],[45,20,45,80],[10,80,45,80],[55,20,90,20],[90,20,90,80],[55,80,90,80]]},
+  'ㅏ':{name:'A (ah)',s:[[50,10,50,90],[50,50,85,50]]},
+  'ㅓ':{name:'Eo (uh)',s:[[50,10,50,90],[50,50,15,50]]},
+  'ㅗ':{name:'O (oh)',s:[[10,60,90,60],[50,60,50,15]]},
+  'ㅜ':{name:'U (oo)',s:[[10,40,90,40],[50,40,50,85]]},
+  'ㅡ':{name:'Eu',s:[[10,50,90,50]]},
+  'ㅣ':{name:'I (ee)',s:[[50,10,50,90]]},
+  'ㅐ':{name:'Ae (eh)',s:[[35,10,35,90],[35,50,10,50],[65,10,65,90]]},
+  'ㅔ':{name:'E (eh)',s:[[35,10,35,90],[35,50,65,50],[65,10,65,90]]},
+  'ㅑ':{name:'Ya',s:[[50,10,50,90],[50,33,85,33],[50,65,85,65]]},
+  'ㅕ':{name:'Yeo',s:[[50,10,50,90],[50,33,15,33],[50,65,15,65]]},
+  'ㅛ':{name:'Yo',s:[[10,60,90,60],[33,60,33,15],[67,60,67,15]]},
+  'ㅠ':{name:'Yu',s:[[10,40,90,40],[33,40,33,85],[67,40,67,85]]},
 };
 
-// Decompose a Hangul syllable block into its jamo components
 function decomposeHangul(char) {
-  const code = char.charCodeAt(0);
-  if (code < 0xAC00 || code > 0xD7A3) return [char]; // not Hangul syllable
-  const offset = code - 0xAC00;
-  const jong = offset % 28;
-  const jung = ((offset - jong) / 28) % 21;
-  const cho = Math.floor(offset / 28 / 21);
-
-  const choList  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-  const jungList = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-  const jongList = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-
-  const result = [choList[cho], jungList[jung]];
-  if (jongList[jong]) result.push(jongList[jong]);
-  return result;
+  var code=char.charCodeAt(0);
+  if(code<0xAC00||code>0xD7A3)return[char];
+  var offset=code-0xAC00, jong=offset%28, jung=((offset-jong)/28)%21, cho=Math.floor(offset/28/21);
+  var cL=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  var jL=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+  var nL=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  var r=[cL[cho],jL[jung]]; if(nL[jong])r.push(nL[jong]); return r;
 }
 
-function drawStrokeGuide(char) {
-  const canvas = document.getElementById('strokeCanvas');
-  const info = document.getElementById('strokeInfo');
-  if (!canvas || !info) return;
+function getAllSyllables(word) {
+  var r=[];
+  for(var i=0;i<word.length;i++){var c=word.charCodeAt(i);if(c>=0xAC00&&c<=0xD7A3)r.push(word[i]);}
+  return r.length>0?r:[word[0]];
+}
 
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0, 0, W, H);
+function getFirstSyllable(word){return getAllSyllables(word)[0]||word[0];}
 
-  // Draw grid lines
-  ctx.strokeStyle = '#e8e0d0';
-  ctx.lineWidth = 0.5;
-  ctx.beginPath();
-  ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H);
-  ctx.moveTo(0, H/2); ctx.lineTo(W, H/2);
-  ctx.stroke();
+// ── Build a flat list of all stroke segments for animation ───────────────────
+function buildStrokeList(char) {
+  var syllables=getAllSyllables(char).slice(0,3);
+  var W=220,H=220,pad=6;
+  var vertVowels='ㅏㅓㅐㅔㅑㅕㅒㅖㅣ';
+  var sylW=Math.floor((W-pad*2-(syllables.length-1)*3)/syllables.length);
+  var strokes=[];
 
-  // Draw diagonal guide lines
-  ctx.strokeStyle = '#f0ead8';
-  ctx.beginPath();
-  ctx.moveTo(0,0); ctx.lineTo(W,H);
-  ctx.moveTo(W,0); ctx.lineTo(0,H);
-  ctx.stroke();
-
-  // Draw the character large in centre
-  ctx.fillStyle = '#1B3A6B';
-  ctx.font = 'bold ' + Math.floor(W*0.62) + 'px "Noto Serif KR", serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(char.charAt(0), W/2, H/2 + H*0.04);
-
-  // Draw stroke number overlays on jamo positions
-  const jamo = decomposeHangul(char.charAt(0));
-  const positions = jamo.length === 2
-    ? [{x:W*0.38,y:H*0.38},{x:W*0.62,y:H*0.55}]
-    : [{x:W*0.35,y:H*0.32},{x:W*0.65,y:H*0.42},{x:W*0.50,y:H*0.72}];
-
-  jamo.forEach((j, idx) => {
-    const pos = positions[idx] || {x:W*0.5,y:H*0.5};
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, W*0.10, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(212,168,71,0.85)';
-    ctx.fill();
-    ctx.fillStyle = '#1B3A6B';
-    ctx.font = 'bold '+Math.floor(W*0.11)+'px "Noto Sans KR", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(String(idx+1), pos.x, pos.y);
-  });
-
-  // Build info panel
-  let html = '<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Jamo components:</div>';
-
-  jamo.forEach((j, idx) => {
-    const data = HANGUL_STROKES[j];
-    html += '<div style="margin-bottom:8px;padding:6px 8px;background:white;border-radius:8px;border:1px solid var(--bdr)">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">';
-    html += '<span style="width:20px;height:20px;background:var(--gold);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:var(--blue);flex-shrink:0">'+(idx+1)+'</span>';
-    html += '<span style="font-family:Noto Serif KR,serif;font-size:20px;color:var(--ink)">'+j+'</span>';
-    html += '<span style="font-size:11px;color:var(--blue);font-weight:500">'+(data?data.name:j)+'</span></div>';
-    if (data) {
-      data.strokes.forEach((st, si) => {
-        html += '<div style="font-size:10px;color:var(--muted);margin-left:28px;margin-bottom:2px">';
-        html += '<span style="font-size:14px;color:var(--red);margin-right:5px">'+st.d+'</span>'+st.s+'</div>';
-      });
-      html += '<div style="font-size:10px;color:var(--muted);margin-top:3px;margin-left:28px;font-style:italic">'+data.tip+'</div>';
+  function getBoxes(jamo,colX){
+    var vowel=jamo.length>=2?jamo[1]:'';
+    var iv=vertVowels.indexOf(vowel)>=0;
+    var cH=H-pad*2;
+    if(jamo.length===1)return[{x:colX,y:pad,w:sylW,h:cH}];
+    if(jamo.length===2){
+      if(iv)return[{x:colX,y:pad,w:sylW*0.42,h:cH},{x:colX+sylW*0.42,y:pad,w:sylW*0.58,h:cH}];
+      return[{x:colX,y:pad,w:sylW,h:cH*0.47},{x:colX,y:pad+cH*0.47,w:sylW,h:cH*0.53}];
     }
-    html += '</div>';
-  });
+    if(iv)return[{x:colX,y:pad,w:sylW*0.42,h:cH*0.58},{x:colX+sylW*0.42,y:pad,w:sylW*0.58,h:cH*0.58},{x:colX,y:pad+cH*0.58,w:sylW,h:cH*0.42}];
+    return[{x:colX,y:pad,w:sylW,h:cH*0.30},{x:colX,y:pad+cH*0.30,w:sylW,h:cH*0.34},{x:colX,y:pad+cH*0.64,w:sylW,h:cH*0.36}];
+  }
 
-  info.innerHTML = html;
+  syllables.forEach(function(syl,si){
+    var colX=pad+si*(sylW+3);
+    var jamo=decomposeHangul(syl);
+    var boxes=getBoxes(jamo,colX);
+    jamo.forEach(function(j,ji){
+      var b=boxes[ji]; if(!b)return;
+      var data=JAMO_STROKES[j]; if(!data)return;
+      data.s.forEach(function(s,si2){
+        function bpx(p){return b.x+p/100*b.w;}
+        function bpy(p){return b.y+p/100*b.h;}
+        if(s&&s.type==='arc'){
+          strokes.push({type:'arc',cx:bpx(s.cx),cy:bpy(s.cy),r:s.r/100*Math.min(b.w,b.h),num:si2+1,jamo:j,box:b});
+        } else if(Array.isArray(s)){
+          strokes.push({type:'line',x1:bpx(s[0]),y1:bpy(s[1]),x2:bpx(s[2]),y2:bpy(s[3]),num:si2+1,jamo:j,box:b});
+        }
+      });
+    });
+  });
+  return strokes;
+}
+
+// ── Animation state ──────────────────────────────────────────────────────────
+var _animChar='', _animStrokes=[], _animIdx=0, _animFrame=null, _animProgress=0;
+var ANIM_STEPS=40, PAUSE_MS=320;
+
+function drawBackground(ctx,char){
+  var W=220,H=220,pad=6;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#e0d8c8'; ctx.lineWidth=1; ctx.strokeRect(1,1,W-2,H-2);
+
+  // Column dividers
+  var syllables=getAllSyllables(char).slice(0,3);
+  if(syllables.length>1){
+    var sylW=Math.floor((W-pad*2-(syllables.length-1)*3)/syllables.length);
+    for(var i=1;i<syllables.length;i++){
+      var divX=pad+i*(sylW+3)-1;
+      ctx.strokeStyle='#d8d0c0'; ctx.lineWidth=0.8;
+      ctx.beginPath(); ctx.moveTo(divX,pad); ctx.lineTo(divX,H-pad); ctx.stroke();
+    }
+  }
+}
+
+function drawCompletedStroke(ctx, s) {
+  ctx.strokeStyle='#1B3A6B'; ctx.lineWidth=4; ctx.lineCap='round';
+  if(s.type==='arc'){
+    ctx.beginPath(); ctx.arc(s.cx,s.cy,s.r,Math.PI*0.25,Math.PI*0.25+Math.PI*1.9,false); ctx.stroke();
+    var ea=Math.PI*0.25+Math.PI*1.9;
+    drawArrowHead(ctx,s.cx+s.r*Math.cos(ea),s.cy+s.r*Math.sin(ea),ea+Math.PI/2);
+    drawNumBadge(ctx,s.cx+s.r*Math.cos(Math.PI*0.25),s.cy+s.r*Math.sin(Math.PI*0.25),s.num,Math.PI*0.25);
+  } else {
+    ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(s.x2,s.y2); ctx.stroke();
+    var a=Math.atan2(s.y2-s.y1,s.x2-s.x1);
+    var t=0.7,mx=s.x1+t*(s.x2-s.x1),my=s.y1+t*(s.y2-s.y1);
+    var px2=mx-Math.sin(a)*14,py2=my+Math.cos(a)*14;
+    ctx.strokeStyle='#C0392B'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(px2,py2); ctx.lineTo(px2+11*Math.cos(a),py2+11*Math.sin(a)); ctx.stroke();
+    drawArrowHead(ctx,px2+11*Math.cos(a),py2+11*Math.sin(a),a);
+    drawNumBadge(ctx,s.x1,s.y1,s.num,a);
+  }
+}
+
+function drawArrowHead(ctx,x2,y2,angle){
+  ctx.fillStyle='#C0392B';
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-10*Math.cos(angle-0.42),y2-10*Math.sin(angle-0.42));
+  ctx.lineTo(x2-10*Math.cos(angle+0.42),y2-10*Math.sin(angle+0.42));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawNumBadge(ctx,x,y,num,angle){
+  var off=11, ox=x-Math.sin(angle)*off, oy=y+Math.cos(angle)*off;
+  ctx.fillStyle='#D4A847';
+  ctx.beginPath(); ctx.arc(ox,oy,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#1B3A6B'; ctx.font='bold 9px sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(String(num),ox,oy);
+}
+
+function drawPartialStroke(ctx, s, progress) {
+  ctx.strokeStyle='#2E5BA8'; ctx.lineWidth=4; ctx.lineCap='round';
+  if(s.type==='arc'){
+    var startA=Math.PI*0.25, endA=Math.PI*0.25+Math.PI*1.9*progress;
+    ctx.beginPath(); ctx.arc(s.cx,s.cy,s.r,startA,endA,false); ctx.stroke();
+    // Moving dot at tip
+    ctx.fillStyle='#2E5BA8';
+    ctx.beginPath(); ctx.arc(s.cx+s.r*Math.cos(endA),s.cy+s.r*Math.sin(endA),5,0,Math.PI*2); ctx.fill();
+  } else {
+    var px=s.x1+(s.x2-s.x1)*progress, py=s.y1+(s.y2-s.y1)*progress;
+    ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(px,py); ctx.stroke();
+    // Moving dot at tip
+    ctx.fillStyle='#2E5BA8';
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
+  }
+}
+
+function animStep(){
+  var canvas=document.getElementById('strokeCanvas'); if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  _animProgress+=1/ANIM_STEPS;
+  if(_animProgress>=1){
+    _animProgress=0;
+    // Redraw all completed strokes so far
+    drawBackground(ctx,_animChar);
+    for(var i=0;i<=_animIdx;i++) drawCompletedStroke(ctx,_animStrokes[i]);
+    _animIdx++;
+    if(_animIdx>=_animStrokes.length){
+      // Done — update hint
+      var hint=document.getElementById('strokeHint');
+      if(hint)hint.textContent='Tap Play again to replay';
+      return;
+    }
+    // Pause between strokes
+    setTimeout(function(){_animFrame=requestAnimationFrame(animStep);},PAUSE_MS);
+  } else {
+    drawBackground(ctx,_animChar);
+    for(var i=0;i<_animIdx;i++) drawCompletedStroke(ctx,_animStrokes[i]);
+    drawPartialStroke(ctx,_animStrokes[_animIdx],_animProgress);
+    _animFrame=requestAnimationFrame(animStep);
+  }
+}
+
+function startAnimation(char){
+  if(_animFrame){cancelAnimationFrame(_animFrame);_animFrame=null;}
+  _animChar=char;
+  _animStrokes=buildStrokeList(char);
+  _animIdx=0; _animProgress=0;
+  var canvas=document.getElementById('strokeCanvas'); if(!canvas)return;
+  canvas.width=220; canvas.height=220;
+  var ctx=canvas.getContext('2d');
+  drawBackground(ctx,char);
+  var hint=document.getElementById('strokeHint');
+  if(hint)hint.textContent='Drawing strokes…';
+  setTimeout(function(){_animFrame=requestAnimationFrame(animStep);},400);
+  // Info panel
+  var info=document.getElementById('strokeInfo');
+  if(info){
+    var syllables=getAllSyllables(char).slice(0,3);
+    var allJamo=[];
+    syllables.forEach(function(s){allJamo=allJamo.concat(decomposeHangul(s));});
+    var html='<div id="strokeHint" style="font-size:11px;color:var(--blue);margin-bottom:4px">Drawing strokes…</div>';
+    html+='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:3px">';
+    allJamo.forEach(function(j){
+      var d=JAMO_STROKES[j];
+      html+='<span style="padding:2px 8px;background:white;border:1px solid var(--bdr);border-radius:20px">'
+           +'<span style="font-family:Noto Serif KR,serif;font-size:14px;color:var(--ink)">'+j+'</span>'
+           +' <span style="font-size:10px;color:var(--blue)">'+(d?d.name:j)+'</span></span>';
+    });
+    html+='</div><div style="font-size:10px;color:var(--muted);text-align:center">Gold = stroke start · Red = direction</div>';
+    info.innerHTML=html;
+  }
+}
+
+function replayAnimation(){startAnimation(_animChar);}
+
+function showAllStrokes(){
+  if(_animFrame){cancelAnimationFrame(_animFrame);_animFrame=null;}
+  var canvas=document.getElementById('strokeCanvas'); if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  drawBackground(ctx,_animChar);
+  _animStrokes.forEach(function(s){drawCompletedStroke(ctx,s);});
+  var hint=document.getElementById('strokeHint');
+  if(hint)hint.textContent='All strokes shown · Tap Play to animate';
 }
 
 function initHanziWriter(char) {
-  // For Korean, use our Hangul stroke guide instead
-  drawStrokeGuide(char);
+  setTimeout(function(){ startAnimation(char); }, 300);
 }
+
+
 
 // ═══════════════════════════════════════════════
 // STAGE SELECTOR
