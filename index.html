@@ -3,958 +3,753 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1B3A6B">
-<meta name="color-scheme" content="light">
-<link rel="manifest" href="manifest.json">
-<title>한식 Korean Menu</title>
+<meta name="theme-color" content="#003478">
+<meta name="color-scheme" content="light only">
+<title>한식 Menu Master — Korean</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+/* ── Korean flag palette ──
+   Taegukgi: white background, #003478 blue (trigrams), #CD2E3A red (trigrams)
+   We use both colours as the dual accent — blue as primary, red as secondary highlight */
 :root{
-  --blue:#1B3A6B;--blue2:#2E5BA8;--red:#C0392B;--gold:#D4A847;--gold2:#F0C862;
-  --cream:#F5F0E8;--ink:#0d1b2a;--muted:#4a5568;--paper:#F0EBE0;--paper2:#E8DFC8;
-  --bdr:rgba(27,58,107,0.18);--shd:0 4px 20px rgba(27,58,107,0.12)
+  --blue:#003478;
+  --blue2:#1a4f9e;
+  --blue-soft:#EEF2FA;
+  --blue-mid:#C0CFEE;
+  --red:#CD2E3A;
+  --red2:#a32330;
+  --red-soft:#FAEEEE;
+  --white:#FFFFFF;
+  --ink:#1C1C1E;
+  --ink2:#3A3A3C;
+  --ink3:#6C6C70;
+  --bg:#FFFFFF;
+  --bg2:#F9F9F9;
+  --bg3:#F2F2F2;
+  --bdr:rgba(0,0,0,0.08);
+  --bdr-blue:rgba(0,52,120,0.18);
+  --shd:0 1px 6px rgba(0,0,0,0.07);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{background:#F5F0E8!important}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--cream)!important;color:var(--ink)!important;min-height:100vh;overflow-x:hidden}
-header{background:var(--blue);padding:.8rem 1.1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-.hl{display:flex;align-items:center;gap:9px}
-.logo{font-size:26px;line-height:1}
-.ht h1{font-size:13px;font-weight:500;color:var(--gold2);letter-spacing:2px;text-transform:uppercase}
-.ht p{font-size:10px;color:rgba(240,200,98,.55);letter-spacing:1px}
-.streak{display:flex;align-items:center;gap:5px;background:rgba(212,168,71,.15);border:1px solid var(--gold);border-radius:20px;padding:5px 11px;color:var(--gold2);font-size:12px;font-weight:500}
-nav{background:var(--paper);border-bottom:1px solid var(--bdr);display:flex;overflow-x:auto;scrollbar-width:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--white);color:var(--ink);font-family:'Noto Sans KR',sans-serif}
+
+/* ── HEADER — deep Taegukgi blue with white text ── */
+header{background:var(--blue);flex-shrink:0}
+.header-inner{max-width:900px;margin:0 auto;padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.hl{display:flex;align-items:center;gap:10px}
+.logo-circle{width:38px;height:38px;border-radius:50%;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ht-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:.04em}
+.ht-sub{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase;margin-top:1px}
+.streak-badge{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 11px;color:var(--white);font-size:12px}
+
+/* ── NAV — blue underline on white ── */
+nav{background:var(--white);border-bottom:2px solid var(--blue);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 nav::-webkit-scrollbar{display:none}
-nav button{flex-shrink:0;padding:12px 14px;border:none;background:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:11.5px;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
-nav button.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
-nav button:hover{color:var(--blue)}
-main{max-width:840px;margin:0 auto;padding:1.2rem}
-section{display:none}
-section.active{display:block}
-.sh{display:flex;align-items:center;gap:8px;margin-bottom:1.2rem}
-.sh h2{font-family:'Noto Serif KR',serif;font-size:19px;color:var(--blue)}
-.orn{color:var(--gold);font-size:16px}
-/* DAILY */
-.dtop{text-align:center;margin-bottom:1.4rem}
-.dtop h2{font-family:'Noto Serif KR',serif;font-size:21px;color:var(--blue);margin-bottom:3px}
-.dtop p{font-size:11px;color:var(--muted)}
-.pbar{background:var(--paper2);border-radius:8px;height:7px;margin:.7rem auto;max-width:260px;overflow:hidden}
-.pfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:8px;transition:width .4s}
-.cc{background:var(--paper);border:1px solid var(--bdr);border-radius:16px;padding:1.6rem;margin-bottom:1.1rem;box-shadow:var(--shd);text-align:center;position:relative;overflow:hidden}
-.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--gold))}
-.cnl{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:.4rem}
-.lvb{display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;letter-spacing:1px;margin-bottom:.4rem;border:1px solid}
-.l1{background:rgba(39,174,96,.08);border-color:rgba(39,174,96,.4);color:#1e8449}
-.l2{background:rgba(27,58,107,.08);border-color:rgba(27,58,107,.4);color:#1B3A6B}
-.l3{background:rgba(192,57,43,.08);border-color:rgba(192,57,43,.3);color:var(--red)}
-.bc{font-family:'Noto Serif KR',serif;font-size:80px;color:var(--ink);line-height:1.15;margin:.3rem 0;cursor:pointer;transition:transform .15s;display:inline-block;user-select:none}
-.bc:hover{transform:scale(1.06)}
-.cp{font-size:17px;color:var(--blue);font-weight:400;letter-spacing:2px;margin:.3rem 0}
-.cm{font-size:16px;color:var(--ink);margin:.3rem 0}
-.cs{font-size:11px;color:var(--muted);margin:.2rem 0}
-.ctx{background:rgba(27,58,107,.04);border-left:3px solid var(--blue);border-radius:4px;padding:9px 13px;margin-top:.8rem;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ctx .cn{font-family:'Noto Serif KR',serif;font-size:15px;color:var(--ink);margin-bottom:2px}
-.ctx .en{font-size:11px;color:var(--muted)}
-.ctip{font-size:11px;color:var(--muted);margin-top:.7rem;padding:7px 11px;background:rgba(212,168,71,.08);border-radius:8px;text-align:left;line-height:1.5}
-.spk{margin-top:.8rem;background:var(--blue);color:white;border:none;border-radius:25px;padding:8px 20px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:inline-flex;align-items:center;gap:7px;transition:background .2s}
-.spk:hover{background:var(--blue2)}
-.cnav{display:flex;justify-content:space-between;align-items:center;margin-top:.8rem}
-.nb{background:white;border:1px solid var(--bdr);border-radius:10px;padding:8px 16px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--muted);transition:all .2s}
-.nb:hover{border-color:var(--blue);color:var(--blue)}
-.nb:disabled{opacity:.3;cursor:not-allowed}
-/* WRITE BOX */
-.write-box{margin-top:.9rem;background:rgba(27,58,107,.03);border:1px solid var(--bdr);border-radius:10px;padding:10px 13px;text-align:left}
-.write-box h4{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem}
-/* QUIZ */
-.qcard{background:var(--paper);border:1px solid var(--bdr);border-radius:16px;padding:1.8rem;text-align:center;box-shadow:var(--shd);margin-bottom:1rem}
-.qq{font-family:'Noto Serif KR',serif;font-size:66px;color:var(--ink);margin-bottom:1rem;line-height:1.2}
-.qopts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:.8rem}
-.qopt{background:white;border:1.5px solid var(--bdr);border-radius:10px;padding:13px 11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;transition:all .2s;text-align:center;line-height:1.4}
-.qopt:hover{border-color:var(--gold);background:rgba(212,168,71,.05)}
-.qopt.ok{border-color:#27ae60;background:#eafaf1;color:#1e8449}
-.qopt.no{border-color:#c0392b;background:#fdedec;color:#c0392b}
-/* MENU */
-.ctabs,.ptabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1.2rem}
-.ctab,.ptab{background:white;border:1px solid var(--bdr);border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:var(--muted);transition:all .2s}
-.ctab.on,.ptab.on,.ctab:hover,.ptab:hover{background:var(--blue);color:white;border-color:var(--blue)}
-.msrch{width:100%;padding:9px 14px;border:1px solid var(--bdr);border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:13px;background:white;color:var(--ink);margin-bottom:1rem;outline:none}
-.msrch:focus{border-color:var(--blue)}
-.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.mi{background:white;border:1px solid var(--bdr);border-radius:11px;padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}
-.mi:hover{box-shadow:var(--shd);border-color:rgba(27,58,107,.4)}
-.mchar{font-family:'Noto Serif KR',serif;font-size:22px;color:var(--ink);min-width:50px;text-align:center;line-height:1.3}
+.nav-btn{flex-shrink:0;padding:11px 18px;border:none;background:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--ink3);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s;white-space:nowrap}
+.nav-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+.nav-btn:hover{color:var(--blue)}
+
+/* ── LAYOUT ── */
+#app{display:flex;flex-direction:column;height:100%}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{display:none;max-width:900px;margin:0 auto;padding:1.2rem 1rem 4rem}
+.page.active{display:block}
+
+/* ── SHARED ── */
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:1.1rem;padding-bottom:.6rem;border-bottom:1px solid var(--bdr)}
+.sh h2{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:600;color:var(--ink)}
+.orn{color:var(--blue);font-size:13px;opacity:.6}
+.card{background:var(--white);border:1px solid var(--bdr);border-top:3px solid var(--blue);border-radius:2px;padding:1.4rem;margin-bottom:1rem;box-shadow:var(--shd)}
+
+/* ── QUIZ ── */
+.quiz-char{font-family:'Noto Serif KR',serif;font-size:88px;color:var(--ink);text-align:center;line-height:1.1;margin:.3rem 0 .2rem;cursor:pointer;transition:transform .12s;display:inline-block;user-select:none}
+.quiz-char:hover{transform:scale(1.05)}
+.quiz-rom{font-size:15px;color:var(--blue);text-align:center;margin-bottom:.3rem;letter-spacing:.06em;font-weight:300}
+.quiz-prompt{font-size:11px;color:var(--ink3);text-align:center;margin-bottom:1rem;letter-spacing:.05em;text-transform:uppercase}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qopt{background:var(--white);border:1px solid var(--bdr);border-radius:2px;padding:13px 10px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;transition:all .18s;text-align:center;color:var(--ink);line-height:1.4}
+.qopt:hover{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}
+.qopt.ok{border-color:#2e7d32;background:#f1f8f1;color:#1b5e20}
+.qopt.no{border-color:var(--red);background:var(--red-soft);color:var(--red2)}
+.qfb{text-align:center;font-size:13px;min-height:20px;margin-top:.8rem}
+.quiz-score-row{display:flex;justify-content:center;gap:28px;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--bdr)}
+.qscore-item{text-align:center}
+.qscore-num{font-family:'Noto Serif KR',serif;font-size:28px;font-weight:600;line-height:1}
+.qscore-num.c{color:#2e7d32}
+.qscore-num.w{color:var(--red)}
+.qscore-lbl{font-size:10px;color:var(--ink3);margin-top:3px;text-transform:uppercase;letter-spacing:.08em}
+.quiz-spk{background:var(--blue);color:var(--white);border:none;border-radius:2px;padding:8px 20px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:.8rem;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.quiz-spk:hover{background:var(--blue2)}
+.quiz-mode-toggle{display:flex;gap:6px;margin-bottom:1rem}
+.qmode{flex:1;padding:8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:2px;cursor:pointer;font-size:11px;color:var(--ink3);font-family:'Noto Sans KR',sans-serif;text-align:center;transition:all .18s}
+.qmode.on{background:var(--blue);color:var(--white);border-color:var(--blue);font-weight:500}
+
+/* ── MENU ── */
+.menu-search{width:100%;padding:9px 14px;border:none;border-bottom:2px solid var(--blue);background:var(--bg2);font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--ink);outline:none;margin-bottom:1rem}
+.menu-search:focus{background:var(--white);border-bottom-color:var(--blue2)}
+.menu-search::placeholder{color:var(--ink3)}
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.ctab{background:var(--white);border:1px solid var(--bdr);border-radius:2px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:var(--ink2);transition:all .18s;font-weight:500}
+.ctab.on,.ctab:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
+.menu-count{font-size:11px;color:var(--ink3);margin-bottom:.7rem}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:7px}
+.mi{background:var(--white);border:1px solid var(--bdr);border-radius:2px;padding:11px 13px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:11px;border-left:3px solid transparent}
+.mi:hover{border-left-color:var(--blue);background:var(--blue-soft)}
+.mchar{font-family:'Noto Serif KR',serif;font-size:20px;color:var(--ink);min-width:44px;text-align:center;line-height:1.3;flex-shrink:0}
 .minfo{flex:1;min-width:0}
-.mpinyin{font-size:11px;color:var(--blue);margin-bottom:1px}
+.mrom{font-size:11px;color:var(--blue);font-weight:500;margin-bottom:1px}
 .men{font-size:13px;color:var(--ink);font-weight:500;margin-bottom:2px}
-.mdesc{font-size:10.5px;color:var(--muted);line-height:1.3}
-.mtag{display:inline-block;font-size:9px;padding:1px 7px;border-radius:10px;margin-top:3px}
-.tv{background:rgba(39,174,96,.1);color:#1e8449;border:1px solid rgba(39,174,96,.3)}
-.th{background:rgba(192,57,43,.1);color:#c0392b;border:1px solid rgba(192,57,43,.3)}
-.tp{background:rgba(212,168,71,.15);color:#856404;border:1px solid rgba(212,168,71,.4)}
-.ts{background:rgba(41,128,185,.1);color:#1a5276;border:1px solid rgba(41,128,185,.3)}
-.sspk{background:none;border:1px solid var(--bdr);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--blue);flex-shrink:0;transition:all .2s}
-.sspk:hover{background:var(--blue);color:white}
-/* PHRASES */
-.plist{display:flex;flex-direction:column;gap:8px}
-.pcard{background:white;border:1px solid var(--bdr);border-radius:11px;padding:13px 15px;display:flex;align-items:center;gap:14px;transition:all .2s}
-.pcard:hover{box-shadow:var(--shd)}
-.pcn{font-family:'Noto Serif KR',serif;font-size:16px;min-width:130px;color:var(--ink);line-height:1.4;cursor:pointer}
-.pdet{flex:1}
-.ppy{font-size:11px;color:var(--blue);margin-bottom:3px}
-.pen{font-size:13px;color:var(--ink)}
-/* STAGE BUTTONS */
-.stbtn{background:white;border:1.5px solid var(--bdr);border-radius:10px;padding:8px 14px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:500;color:var(--muted);transition:all .2s;text-align:center;line-height:1.6;min-width:80px}
-.stbtn:hover{border-color:var(--blue);color:var(--blue)}
-.stbtn.on{background:var(--blue);color:white;border-color:var(--blue)}
-/* PROGRESS */
-.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
-.scard{background:white;border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center}
-.snum{font-family:'Noto Serif KR',serif;font-size:34px;color:var(--blue);font-weight:700}
-.slbl{font-size:11px;color:var(--muted);margin-top:3px}
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(13,27,42,.92);color:white;padding:10px 20px;border-radius:25px;font-size:13px;transition:transform .3s;z-index:999;white-space:nowrap;pointer-events:none}
+.mdesc{font-size:10px;color:var(--ink3);line-height:1.35}
+.mtag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:2px;margin-top:2px;font-weight:500;letter-spacing:.03em}
+.tv{background:#eef7ee;color:#2e7d32;border:1px solid #b2dfb3}
+.th{background:var(--red-soft);color:var(--red2);border:1px solid #f4bfc3}
+.tp{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-mid)}
+.ts{background:#e8f4fb;color:#1a5276;border:1px solid #9ecde8}
+.mspk{background:none;border:1px solid var(--bdr);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--blue);flex-shrink:0;transition:all .18s}
+.mspk:hover{background:var(--blue);color:var(--white)}
+
+/* ── PHRASES ── */
+.ptabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.ptab{background:var(--white);border:1px solid var(--bdr);border-radius:2px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:var(--ink2);transition:all .18s;font-weight:500}
+.ptab.on,.ptab:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
+.plist{display:flex;flex-direction:column;gap:5px}
+.pcard{background:var(--white);border:1px solid var(--bdr);border-radius:2px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all .18s;border-left:3px solid transparent}
+.pcard:hover{border-left-color:var(--blue);background:var(--blue-soft)}
+.pcn{font-family:'Noto Serif KR',serif;font-size:16px;min-width:150px;color:var(--ink);line-height:1.45;cursor:pointer}
+.pdet{flex:1;min-width:0}
+.prom{font-size:11px;color:var(--blue);margin-bottom:2px;font-weight:500}
+.pen{font-size:12px;color:var(--ink2)}
+.pspk{background:none;border:1px solid var(--bdr);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--blue);flex-shrink:0;transition:all .18s}
+.pspk:hover{background:var(--blue);color:var(--white)}
+
+/* ── PROGRESS ── */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:1.4rem}
+.scard{background:var(--white);border:1px solid var(--bdr);border-top:3px solid var(--blue);border-radius:2px;padding:14px;text-align:center}
+.snum{font-family:'Noto Serif KR',serif;font-size:34px;font-weight:600;color:var(--blue);line-height:1}
+.slbl{font-size:10px;color:var(--ink3);margin-top:5px;text-transform:uppercase;letter-spacing:.08em}
+.prog-bar-wrap{margin-bottom:.9rem}
+.prog-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:4px}
+.prog-bar-track{background:var(--bg3);height:5px;border-radius:2px;overflow:hidden}
+.prog-bar-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .4s}
+.reset-btn{background:none;border:1px solid var(--bdr);border-radius:2px;padding:9px 18px;cursor:pointer;color:var(--ink3);font-family:'Noto Sans KR',sans-serif;font-size:12px;margin-top:.5rem}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── Red accent on interactive elements — mirrors Taegukgi duality ── */
+.card{border-top-color:var(--blue)}
+.quiz-char:active{color:var(--red)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--white);padding:9px 18px;border-radius:2px;font-size:13px;transition:transform .25s;z-index:999;white-space:nowrap;pointer-events:none;border-left:3px solid var(--blue)}
 .toast.on{transform:translateX(-50%) translateY(0)}
-@media(max-width:480px){.bc{font-size:64px}.qq{font-size:52px}.mgrid{grid-template-columns:1fr}.qopts{grid-template-columns:1fr}.pcn{min-width:100px;font-size:14px}}
+
+@media(max-width:500px){.quiz-char{font-size:68px}.mgrid{grid-template-columns:1fr}.qopts{grid-template-columns:1fr}.pcn{min-width:110px;font-size:14px}}
 </style>
 </head>
 <body>
+<div id="app">
+
+<!-- HEADER -->
 <header>
-  <div class="hl">
-    <div class="logo">🍲</div>
-    <div class="ht"><h1>Korean Menu</h1><p>Korean Restaurant Guide</p></div>
+  <div class="header-inner">
+    <div class="hl">
+      <div class="logo-circle">🍲</div>
+      <div>
+        <div class="ht-title">한식 Menu Master</div>
+        <div class="ht-sub">Korean Restaurant Guide</div>
+      </div>
+    </div>
+    <div class="streak-badge">🔥 <span id="sc">0</span> day streak</div>
   </div>
-  <div class="streak">🔥 <span id="sc">0</span> day streak</div>
 </header>
+
+<!-- NAV -->
 <nav>
-  <button class="active" onclick="tab('daily',this)">📅 Daily 5</button>
-  <button onclick="tab('quiz',this)">🧠 Quiz</button>
-  <button onclick="tab('menu',this)">🍜 Menu</button>
-  <button onclick="tab('phrases',this)">💬 Phrases</button>
-  <button onclick="tab('progress',this)">📊 Progress</button>
+  <button class="nav-btn active" onclick="tab('menu',this)">🍲 Menu</button>
+  <button class="nav-btn" onclick="tab('phrases',this)">💬 Phrases</button>
+  <button class="nav-btn" onclick="tab('quiz',this)">🧠 Quiz</button>
+  <button class="nav-btn" onclick="tab('progress',this)">📊 Progress</button>
 </nav>
-<main>
 
-<!-- DAILY -->
-<section id="daily" class="active">
-  <div class="dtop">
-    <h2>오늘의 학습 · Today's Characters</h2>
-    <p id="dlbl"></p>
-    <div class="pbar"><div class="pfill" id="pf" style="width:20%"></div></div>
-    <p style="font-size:11px;color:var(--muted)">Character <span id="cn">1</span> of 5</p>
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- MENU -->
+  <div class="page active" id="page-menu">
+    <input class="menu-search" id="menuSearch" type="text" placeholder="Search in Korean, romanisation or English…" oninput="filterMenu()">
+    <div class="cat-tabs" id="catTabs"></div>
+    <div class="menu-count" id="menuCount"></div>
+    <div class="mgrid" id="menuGrid"></div>
   </div>
-  <div class="cc">
-    <div class="cnl">CHARACTER <span id="cnum">01</span></div>
-    <div id="clvl" class="lvb l1">STAGE 1 · SINGLE SYLLABLE WORDS</div>
-    <div class="bc" id="bchar" onclick="spkCur()">밥</div>
-    <div class="cp" id="cpiny">bap</div>
-    <div class="cm" id="cmean">Cooked Rice / Meal</div>
-    <div class="cs" id="cstk"></div>
-    <div class="ctx">
-      <div class="pcn" id="cex" style="min-width:unset;cursor:default"></div>
-      <div style="flex:1">
-        <div style="font-size:11px;color:var(--blue);margin-bottom:2px" id="cexpy"></div>
-        <div class="en" id="cexe"></div>
+
+  <!-- PHRASES -->
+  <div class="page" id="page-phrases">
+    <div class="ptabs" id="phraseTabs"></div>
+    <div class="plist" id="phraseList"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="page" id="page-quiz">
+    <div class="card">
+      <div class="quiz-mode-toggle">
+        <button class="qmode on" id="qm-meaning" onclick="setQuizMode('meaning',this)">Korean → English</button>
+        <button class="qmode" id="qm-reading" onclick="setQuizMode('reading',this)">English → Korean</button>
+        <button class="qmode" id="qm-listen" onclick="setQuizMode('listen',this)">🔊 Listen &amp; Choose</button>
       </div>
-      <button class="sspk" onclick="spk(daily[ci].ex)" title="Hear example"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-    </div>
-    <div class="ctip" id="ctip"></div>
-    <div class="write-box" id="writebox">
-      <h4>&#9998; How to Write &middot; Stroke Animation</h4>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin:.5rem 0">
-        <canvas id="strokeCanvas" width="220" height="220" style="border:1px solid var(--bdr);border-radius:8px;background:white;cursor:pointer" onclick="replayAnimation()"></canvas>
-        <div style="display:flex;gap:8px">
-          <button onclick="replayAnimation()" class="nb" style="font-size:12px;padding:7px 16px">&#9654; Play again</button>
-          <button onclick="showAllStrokes()" class="nb" style="font-size:12px;padding:7px 16px">&#128065; Show all</button>
-        </div>
-        <div id="strokeInfo" style="font-size:11px;text-align:center"></div>
+      <div style="text-align:center">
+        <div class="quiz-char" id="qChar" onclick="spkQuiz()">밥</div>
+        <div class="quiz-rom" id="qRom"></div>
+        <div class="quiz-prompt" id="qPrompt">What does this mean?</div>
+      </div>
+      <div class="qopts" id="qOpts"></div>
+      <div class="qfb" id="qFb"></div>
+      <div style="text-align:center">
+        <button class="quiz-spk" onclick="spkQuiz()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          Hear pronunciation
+        </button>
+      </div>
+      <div class="quiz-score-row">
+        <div class="qscore-item"><div class="qscore-num c" id="qCorrect">0</div><div class="qscore-lbl">Correct</div></div>
+        <div class="qscore-item" style="display:flex;align-items:center;font-size:20px;color:var(--ink3)">/</div>
+        <div class="qscore-item"><div class="qscore-num" style="color:var(--ink2)" id="qTotal">0</div><div class="qscore-lbl">Total</div></div>
       </div>
     </div>
-    <button class="spk" onclick="spkCur()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-      Hear Pronunciation
-    </button>
-    <div style="margin-top:8px;font-size:11px;color:var(--muted)">💡 Tap the character to hear it</div>
+    <p style="font-size:11px;color:var(--ink3);text-align:center">Tap the character or the button to hear the pronunciation</p>
   </div>
-  <div class="cnav">
-    <button class="nb" id="pb" onclick="chg(-1)" disabled>← Prev</button>
-    <span style="font-size:12px;color:var(--muted)"><span id="cpos">1</span> / 5</span>
-    <button class="nb" id="fwb" onclick="chg(1)">Next →</button>
-  </div>
-  <div style="margin-top:1.2rem;padding:.9rem;background:rgba(212,168,71,.08);border-radius:12px;border:1px solid rgba(212,168,71,.28)">
-    <p style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:.7rem">✨ Jump to any stage — your choice is saved on this device</p>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-      <button onclick="setStage(1)" id="sb1" class="stbtn on">🟢 Stage 1<br><span style="font-size:10px;font-weight:400">Core words</span></button>
-      <button onclick="setStage(2)" id="sb2" class="stbtn">🔵 Stage 2<br><span style="font-size:10px;font-weight:400">Two-word combos</span></button>
-      <button onclick="setStage(3)" id="sb3" class="stbtn">🔴 Stage 3<br><span style="font-size:10px;font-weight:400">Full dish names</span></button>
-      <button onclick="setStage(0)" id="sb0" class="stbtn">🔄 Auto<br><span style="font-size:10px;font-weight:400">Progress daily</span></button>
+
+  <!-- PROGRESS -->
+  <div class="page" id="page-progress">
+    <div class="sh"><span class="orn">❖</span><h2>Your Progress</h2></div>
+    <div class="sgrid">
+      <div class="scard"><div class="snum" id="pDays">0</div><div class="slbl">Days Active</div></div>
+      <div class="scard"><div class="snum" id="pStreak">0</div><div class="slbl">Day Streak</div></div>
+      <div class="scard"><div class="snum" id="pAcc">—</div><div class="slbl">Quiz Accuracy</div></div>
+      <div class="scard"><div class="snum" id="pSeen">0</div><div class="slbl">Words Heard</div></div>
     </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-label"><span>Menu words explored</span><span id="pMenuFrac">0/0</span></div>
+      <div class="prog-bar-track"><div class="prog-bar-fill" id="pMenuBar" style="width:0%"></div></div>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-label"><span>Phrases explored</span><span id="pPhrFrac">0/0</span></div>
+      <div class="prog-bar-track"><div class="prog-bar-fill" id="pPhrBar" style="width:0%"></div></div>
+    </div>
+    <button class="reset-btn" onclick="confirmReset()">Reset Progress</button>
   </div>
-</section>
 
-<!-- QUIZ -->
-<section id="quiz">
-  <div class="sh"><span class="orn">❖</span><h2>Character Quiz</h2><span class="orn">❖</span></div>
-  <div class="qcard">
-    <div style="font-size:12px;color:var(--muted);margin-bottom:6px">What does this mean?</div>
-    <div class="qq" id="qch">밥</div>
-    <div style="font-size:13px;color:var(--blue);margin-bottom:6px" id="qpy"></div>
-    <div class="qopts" id="qopts"></div>
-    <div style="margin-top:.9rem;font-size:12px" id="qfb"></div>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem">
-    <div style="font-size:12px;color:var(--muted)">Score: <strong id="qsc" style="color:var(--blue)">0</strong> / <span id="qtot">0</span></div>
-    <button class="nb" onclick="nxtQ()">Next →</button>
-  </div>
-</section>
-
-<!-- MENU -->
-<section id="menu">
-  <div class="sh"><span class="orn">❖</span><h2>Full Menu Reference</h2><span class="orn">❖</span></div>
-  <input class="msrch" id="msrch" placeholder="Search English, Korean or romanisation…" oninput="rMenu()">
-  <div class="ctabs" id="ctabs"></div>
-  <div style="font-size:11px;color:var(--muted);margin-bottom:.8rem"><span id="mcount">0</span> items</div>
-  <div class="mgrid" id="mgrid"></div>
-</section>
-
-<!-- PHRASES -->
-<section id="phrases">
-  <div class="sh"><span class="orn">❖</span><h2>Phrases &amp; Conversation</h2><span class="orn">❖</span></div>
-  <div class="ptabs" id="ptabs"></div>
-  <div class="plist" id="plist"></div>
-</section>
-
-<!-- PROGRESS -->
-<section id="progress">
-  <div class="sh"><span class="orn">❖</span><h2>Your Progress</h2><span class="orn">❖</span></div>
-  <div class="sgrid">
-    <div class="scard"><div class="snum" id="sd">0</div><div class="slbl">Days Active</div></div>
-    <div class="scard"><div class="snum" id="sch">0</div><div class="slbl">Characters Seen</div></div>
-    <div class="scard"><div class="snum" id="spct">0%</div><div class="slbl">Quiz Accuracy</div></div>
-    <div class="scard"><div class="snum" id="sstr">0</div><div class="slbl">Day Streak</div></div>
-  </div>
-  <div class="sh"><span class="orn">❖</span><h2>Today's Characters</h2></div>
-  <div id="lg" style="display:flex;flex-wrap:wrap;gap:9px"></div>
-  <button onclick="resetP()" style="margin-top:1.8rem;background:none;border:1px solid #ccc;border-radius:8px;padding:9px 18px;cursor:pointer;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:12px">Reset Progress</button>
-</section>
-</main>
+</div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// KOREAN CHARACTER DATABASE
-// Stage 1 — core single/short words
-// Stage 2 — two-word combinations
-// Stage 3 — full dish names
-// ═══════════════════════════════════════════════════════════════
-const CHARS = [
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// STAGE 1 — CORE WORDS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-// Staples & basics
-{ch:'밥',py:'bap',en:'Cooked Rice / Meal',cat:'🍚 Staples',desc:'The most fundamental Korean food word — cooked rice and the word for meal itself',ex:'밥 주세요',expy:'bap juseyo',exe:'Rice please',tip:'밥 means both cooked rice and meal. 공기밥=bowl of rice, 볶음밥=fried rice, 비빔밥=mixed rice.',lv:1},
-{ch:'면',py:'myeon',en:'Noodles',cat:'🍚 Staples',desc:'Noodles — appears in many Korean noodle dish names',ex:'냉면',expy:'naengmyeon',exe:'Cold noodles',tip:'면 appears in: 냉면=cold noodles, 라면=ramen, 짜장면=black bean noodles, 잔치국수=party noodles.',lv:1},
-{ch:'국',py:'guk',en:'Soup / Broth',cat:'🍲 Soups',desc:'Soup — a watery soup served alongside rice at every Korean meal',ex:'국이 맛있어요',expy:'gug-i mas-isseoyo',exe:'The soup is delicious',tip:'국 is a thinner, everyday soup. 탕 is a richer, heartier stew-soup. Both appear on Korean menus.',lv:1},
-{ch:'탕',py:'tang',en:'Rich Soup / Stew-Soup',cat:'🍲 Soups',desc:'A hearty, rich soup — thicker and more substantial than 국',ex:'삼계탕',expy:'samgyetang',exe:'Ginseng chicken soup',tip:'탕 soups are more festive or restorative. 갈비탕=short rib soup, 삼계탕=ginseng chicken.',lv:1},
-{ch:'찌개',py:'jjigae',en:'Stew',cat:'🍲 Soups',desc:'Thick stew — cooked and served bubbling in a clay pot at the table',ex:'김치찌개',expy:'kimchi jjigae',exe:'Kimchi stew',tip:'찌개 is thicker than 국 and saltier — shared in the centre of the table. A Korean staple.',lv:1},
-{ch:'구이',py:'gui',en:'Grilled',cat:'🍳 Cooking',desc:'Grilled meat or fish — often at the table on a built-in grill',ex:'삼겹살 구이',expy:'samgyeopsal gui',exe:'Grilled pork belly',tip:'구이 appears after the ingredient: 삼겹살구이=grilled pork belly, 생선구이=grilled fish.',lv:1},
-{ch:'볶음',py:'bokkeum',en:'Stir-fried',cat:'🍳 Cooking',desc:'Stir-fried in a wok or pan with sauce',ex:'낙지볶음',expy:'nakji bokkeum',exe:'Stir-fried octopus',tip:'볶음 follows the ingredient: 김치볶음=stir-fried kimchi, 제육볶음=spicy pork stir-fry.',lv:1},
-{ch:'찜',py:'jjim',en:'Braised / Steamed',cat:'🍳 Cooking',desc:'Braised slowly in sauce, or steamed — produces tender, deeply flavoured results',ex:'갈비찜',expy:'galbi jjim',exe:'Braised short ribs',tip:'찜 can mean steamed (계란찜=steamed egg custard) or braised (갈비찜=braised ribs).',lv:1},
-{ch:'전',py:'jeon',en:'Savoury Pancake',cat:'🍳 Cooking',desc:'Korean savoury pancake — battered and pan-fried',ex:'해물파전',expy:'haemul pajeon',exe:'Seafood spring onion pancake',tip:'전 is a beloved Korean street food and bar snack. 파전=spring onion, 감자전=potato.',lv:1},
-{ch:'무침',py:'muchim',en:'Cold Dressed Salad',cat:'🍳 Cooking',desc:'Cold vegetables tossed with sesame, chili and soy — Korea\'s answer to salad',ex:'시금치 무침',expy:'sigeumchi muchim',exe:'Spinach cold salad',tip:'무침dishes are served as banchan (side dishes). 콩나물무침=bean sprout salad.',lv:1},
-
-// Proteins
-{ch:'고기',py:'gogi',en:'Meat',cat:'🥩 Meat',desc:'Meat — the general word appearing before specific cuts on BBQ menus',ex:'고기 구워요',expy:'gogi guweoyo',exe:'Grilling meat',tip:'소고기=beef, 돼지고기=pork, 닭고기=chicken. 고기 alone usually means pork at a Korean BBQ.',lv:1},
-{ch:'소',py:'so',en:'Beef / Cow',cat:'🥩 Meat',desc:'Cow — 소고기 is beef, Korea\'s most prestigious BBQ meat',ex:'소고기',expy:'sogogi',exe:'Beef',tip:'소고기 cuts: 등심=sirloin, 안심=tenderloin, 갈비=ribs, 불고기=marinated beef.',lv:1},
-{ch:'돼지',py:'dwaeji',en:'Pork / Pig',cat:'🥩 Meat',desc:'Pig — pork is the most popular Korean BBQ meat',ex:'돼지고기',expy:'dwaejigogi',exe:'Pork',tip:'삼겹살 (pork belly) is Korea\'s most beloved cut. Grilled at the table with garlic and perilla.',lv:1},
-{ch:'닭',py:'dak',en:'Chicken',cat:'🥩 Meat',desc:'Chicken — used in soups, stews and crispy fried dishes',ex:'닭갈비',expy:'dakgalbi',exe:'Spicy stir-fried chicken',tip:'치킨 (chi-kin) = fried chicken (from English). 닭 = raw chicken used in cooking.',lv:1},
-{ch:'삼겹살',py:'samgyeopsal',en:'Pork Belly',cat:'🥩 Meat',desc:'Three-layer pork belly — Korea\'s most iconic BBQ cut',ex:'삼겹살 주세요',expy:'samgyeopsal juseyo',exe:'Pork belly please',tip:'삼=three, 겹=layers, 살=flesh/meat. The three layers of fat and meat. Grilled and wrapped in lettuce.',lv:1},
-{ch:'갈비',py:'galbi',en:'Ribs',cat:'🥩 Meat',desc:'Ribs — beef or pork, marinated and grilled or braised',ex:'갈비탕',expy:'galbitang',exe:'Rib soup',tip:'소갈비=beef ribs, 돼지갈비=pork ribs. 갈비찜=braised ribs. 갈비탕=rib bone soup.',lv:1},
-
-// Seafood
-{ch:'해물',py:'haemul',en:'Seafood',cat:'🦐 Seafood',desc:'Seafood — appears before many seafood dishes and soups',ex:'해물탕',expy:'haemultang',exe:'Seafood soup',tip:'해물 = sea + things. 해물탕=seafood hotpot, 해물파전=seafood pancake.',lv:1},
-{ch:'생선',py:'saengseon',en:'Fish',cat:'🦐 Seafood',desc:'Fish — fresh fish for grilling, steaming or serving raw',ex:'생선구이',expy:'saengseon gui',exe:'Grilled fish',tip:'생선=fresh fish (for eating). 물고기=fish (in the water). On menus: always 생선.',lv:1},
-{ch:'새우',py:'saeu',en:'Shrimp / Prawn',cat:'🦐 Seafood',desc:'Shrimp — popular in soups, stir-fries and as banchan',ex:'새우튀김',expy:'saeu twigim',exe:'Fried shrimp',tip:'새우장=soy-marinated raw shrimp — a Korean delicacy. 새우튀김=fried shrimp.',lv:1},
-{ch:'오징어',py:'ojingeo',en:'Squid',cat:'🦐 Seafood',desc:'Squid — grilled, stir-fried spicy or dried as a snack',ex:'오징어볶음',expy:'ojingeo bokkeum',exe:'Spicy stir-fried squid',tip:'오징어볶음 is one of Korea\'s favourite spicy dishes. Bright red and fiery.',lv:1},
-{ch:'조개',py:'jogae',en:'Clams / Shellfish',cat:'🦐 Seafood',desc:'Clams or shellfish — steamed, in soups or grilled',ex:'조개구이',expy:'jogae gui',exe:'Grilled clams',tip:'조개구이 (grilled clams/shellfish) is hugely popular at Korean BBQ seafood restaurants.',lv:1},
-
-// Vegetables & condiments
-{ch:'김치',py:'kimchi',en:'Kimchi',cat:'🥬 Vegetables',desc:'Fermented spicy cabbage — Korea\'s national dish and most important condiment',ex:'김치 주세요',expy:'kimchi juseyo',exe:'Kimchi please',tip:'There are over 200 types of kimchi. Baechu (napa cabbage) kimchi is the most common.',lv:1},
-{ch:'채소',py:'chaeso',en:'Vegetables',cat:'🥬 Vegetables',desc:'Vegetables — the general word for greens and vegetable dishes',ex:'채소 볶음',expy:'chaeso bokkeum',exe:'Stir-fried vegetables',tip:'나물 = seasoned wild vegetables (served as banchan). 채소 = general vegetables.',lv:1},
-{ch:'두부',py:'dubu',en:'Tofu',cat:'🥬 Vegetables',desc:'Tofu — soft silken tofu in soups, firm tofu in stews and stir-fries',ex:'순두부찌개',expy:'sundubu jjigae',exe:'Soft tofu stew',tip:'순두부=silken tofu, 두부조림=braised tofu. 두부찌개=tofu stew.',lv:1},
-{ch:'파',py:'pa',en:'Spring Onion / Green Onion',cat:'🥬 Vegetables',desc:'Spring onion — a foundational Korean garnish and flavour base',ex:'파전',expy:'pajeon',exe:'Spring onion pancake',tip:'파김치=spring onion kimchi. 파전=spring onion pancake. Used raw as garnish everywhere.',lv:1},
-{ch:'마늘',py:'maneul',en:'Garlic',cat:'🥬 Vegetables',desc:'Garlic — Korea uses more garlic per capita than almost any country',ex:'마늘 구이',expy:'maneul gui',exe:'Grilled garlic',tip:'Whole garlic cloves are grilled alongside meat at Korean BBQ. Intensely flavoured and sweet.',lv:1},
-{ch:'버섯',py:'beoseot',en:'Mushroom',cat:'🥬 Vegetables',desc:'Mushroom — various varieties grilled at BBQ or in soups and hotpots',ex:'버섯 구이',expy:'beoseot gui',exe:'Grilled mushrooms',tip:'표고버섯=shiitake, 팽이버섯=enoki, 새송이버섯=king oyster. All popular at Korean BBQ.',lv:1},
-{ch:'콩나물',py:'kongnamul',en:'Bean Sprouts',cat:'🥬 Vegetables',desc:'Soybean sprouts — a staple banchan and soup ingredient',ex:'콩나물국',expy:'kongnamul guk',exe:'Bean sprout soup',tip:'콩나물국 is eaten as a hangover cure in Korea. Light and refreshing.',lv:1},
-
-// Tastes
-{ch:'맵다',py:'maepda',en:'Spicy',cat:'🌶️ Taste',desc:'Spicy — essential vocabulary for Korean food lovers',ex:'안 맵게 해주세요',expy:'an maepge haejuseyo',exe:'Please make it not spicy',tip:'안 매워요=not spicy, 조금 맵게=a little spicy, 아주 맵게=very spicy. Know these!',lv:1},
-{ch:'짜다',py:'jjada',en:'Salty',cat:'🌶️ Taste',desc:'Salty — Korean food can be quite salty due to fermented pastes and soy',ex:'너무 짜요',expy:'neomu jjayo',exe:'Too salty',tip:'너무 = too/very. 너무 짜요 = too salty. 조금 싱겁게=a little less salty.',lv:1},
-{ch:'달다',py:'dalda',en:'Sweet',cat:'🌶️ Taste',desc:'Sweet — Korean marinades (불고기, 갈비) are often sweetened with pear or sugar',ex:'달콤해요',expy:'dalkomhaeyo',exe:'It is sweet',tip:'달콤하다=delicately sweet. 불고기 marinade uses Asian pear for sweetness and tenderness.',lv:1},
-{ch:'구수하다',py:'gusu-hada',en:'Savoury / Nutty umami',cat:'🌶️ Taste',desc:'A uniquely Korean taste concept — deep, nutty, comforting savouriness',ex:'구수한 된장국',expy:'gusuban doenjang guk',exe:'Savoury doenjang soup',tip:'구수하다 is often used to describe doenjang (fermented soybean paste) soups and roasted grain teas.',lv:1},
-{ch:'고소하다',py:'goso-hada',en:'Nutty / Sesame-fragrant',cat:'🌶️ Taste',desc:'Nutty, toasty, sesame-like fragrance — a beloved taste in Korean food',ex:'고소한 참기름',expy:'gosoran chamgireum',exe:'Nutty sesame oil',tip:'참기름 (sesame oil) is one of Korean cooking\'s most essential finishing flavours.',lv:1},
-
-// Key condiments
-{ch:'고추장',py:'gochujang',en:'Chili Paste',cat:'🌶️ Taste',desc:'Fermented red chili paste — Korea\'s most important condiment',ex:'고추장 양념',expy:'gochujang yangnyeom',exe:'Chili paste seasoning',tip:'고추장 is sweet, spicy and umami all at once. Used in bibimbap, tteokbokki, marinades.',lv:1},
-{ch:'된장',py:'doenjang',en:'Fermented Soybean Paste',cat:'🌶️ Taste',desc:'Korean fermented soybean paste — deeper and earthier than Japanese miso',ex:'된장찌개',expy:'doenjang jjigae',exe:'Soybean paste stew',tip:'된장찌개 is the most common everyday Korean stew. Made with tofu, zucchini and anchovy stock.',lv:1},
-{ch:'간장',py:'ganjang',en:'Soy Sauce',cat:'🌶️ Taste',desc:'Korean soy sauce — lighter and slightly less salty than Chinese varieties',ex:'간장 양념',expy:'ganjang yangnyeom',exe:'Soy sauce marinade',tip:'간장게장=raw crab marinated in soy sauce — called "rice thief" for how good it is with rice.',lv:1},
-{ch:'참기름',py:'chamgireum',en:'Sesame Oil',cat:'🌶️ Taste',desc:'Toasted sesame oil — the essential finishing oil in Korean cooking',ex:'참기름 넣어요',expy:'chamgireum neoeoyo',exe:'Add sesame oil',tip:'Drizzled over bibimbap, namul, and soups. The smell of Korean cooking is largely sesame oil.',lv:1},
-
-// Drinks & dessert
-{ch:'차',py:'cha',en:'Tea',cat:'🍵 Drinks',desc:'Tea — Korean herbal and grain teas are distinct from Chinese green tea',ex:'매실차',expy:'maesil cha',exe:'Plum tea',tip:'유자차=yuzu honey tea, 매실차=plum tea, 보리차=barley tea (served free at restaurants).',lv:1},
-{ch:'술',py:'sul',en:'Alcohol / Drink',cat:'🍵 Drinks',desc:'Alcohol — the general word for all alcoholic drinks',ex:'소주 한 병',expy:'soju han byeong',exe:'One bottle of soju',tip:'소주=soju (Korea\'s national drink), 막걸리=rice wine, 맥주=beer.',lv:1},
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// STAGE 2 — TWO-WORD COMBINATIONS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-{ch:'소고기',py:'sogogi',en:'Beef',cat:'🥩 Meat',desc:'Beef — premium ingredient in Korean BBQ and soups',ex:'소고기 주세요',expy:'sogogi juseyo',exe:'Beef please',tip:'소=cow + 고기=meat. 한우 (Hanu) = Korean native beef, much prized.',lv:2},
-{ch:'돼지고기',py:'dwaejigogi',en:'Pork',cat:'🥩 Meat',desc:'Pork — the most commonly consumed meat in Korea',ex:'돼지고기 볶음',expy:'dwaejigogi bokkeum',exe:'Stir-fried pork',tip:'돼지=pig + 고기=meat. 앞다리=shoulder, 삼겹살=belly, 목살=neck.',lv:2},
-{ch:'닭고기',py:'dakgogi',en:'Chicken',cat:'🥩 Meat',desc:'Chicken meat — used in soups, stews and Korean fried chicken',ex:'닭고기 찜',expy:'dakgogi jjim',exe:'Braised chicken',tip:'치킨 (chikin) is the Korean word for fried chicken. 닭고기 = raw/cooking chicken.',lv:2},
-{ch:'불고기',py:'bulgogi',en:'Marinated BBQ Beef',cat:'🥩 Meat',desc:'Thinly sliced marinated beef — one of Korea\'s most famous dishes',ex:'불고기 주세요',expy:'bulgogi juseyo',exe:'Bulgogi please',tip:'불=fire + 고기=meat. Marinated in soy, pear, garlic, sesame. Sweet and savoury.',lv:2},
-{ch:'김치찌개',py:'kimchi jjigae',en:'Kimchi Stew',cat:'🍲 Soups',desc:'Bubbling kimchi stew with pork and tofu — Korea\'s most comforting dish',ex:'김치찌개 주세요',expy:'kimchi jjigae juseyo',exe:'Kimchi stew please',tip:'Best made with old, well-fermented kimchi. The sourer the kimchi, the better the stew.',lv:2},
-{ch:'된장찌개',py:'doenjang jjigae',en:'Soybean Paste Stew',cat:'🍲 Soups',desc:'Hearty fermented soybean paste stew with tofu and vegetables',ex:'된장찌개 주세요',expy:'doenjang jjigae juseyo',exe:'Doenjang stew please',tip:'A daily staple in Korean homes. Made with anchovy stock, tofu, zucchini, mushrooms.',lv:2},
-{ch:'순두부찌개',py:'sundubu jjigae',en:'Soft Tofu Stew',cat:'🍲 Soups',desc:'Silky soft tofu in a spicy or mild seafood broth — served with a raw egg',ex:'순두부찌개 주세요',expy:'sundubu jjigae juseyo',exe:'Soft tofu stew please',tip:'Crack the raw egg into the bubbling stew at the table. A breakfast favourite too.',lv:2},
-{ch:'삼계탕',py:'samgyetang',en:'Ginseng Chicken Soup',cat:'🍲 Soups',desc:'Whole young chicken stuffed with rice, ginseng and jujube — eaten in summer',ex:'삼계탕 주세요',expy:'samgyetang juseyo',exe:'Ginseng chicken soup please',tip:'Eaten on the hottest days of summer (복날) to replenish energy. Fight fire with fire!',lv:2},
-{ch:'설렁탕',py:'seolleongtang',en:'Ox Bone Soup',cat:'🍲 Soups',desc:'Milky white ox bone broth simmered for hours — mild and deeply nourishing',ex:'설렁탕 주세요',expy:'seolleongtang juseyo',exe:'Ox bone soup please',tip:'The white colour comes from collagen dissolving from the bones. Season with salt and green onion.',lv:2},
-{ch:'갈비탕',py:'galbitang',en:'Short Rib Soup',cat:'🍲 Soups',desc:'Clear beef short rib soup with glass noodles and radish',ex:'갈비탕 주세요',expy:'galbitang juseyo',exe:'Short rib soup please',tip:'갈비탕 is a celebration and recovery food. Clear broth, fall-off-the-bone ribs.',lv:2},
-{ch:'해물탕',py:'haemultang',en:'Seafood Soup',cat:'🍲 Soups',desc:'Fiery red seafood hotpot with clams, shrimp, crab and vegetables',ex:'해물탕 주세요',expy:'haemultang juseyo',exe:'Seafood soup please',tip:'Served bubbling at the table. Often shared. Mop up the spicy broth with rice.',lv:2},
-{ch:'냉면',py:'naengmyeon',en:'Cold Noodles',cat:'🍚 Staples',desc:'Chewy buckwheat noodles served in chilled broth or with spicy sauce',ex:'냉면 주세요',expy:'naengmyeon juseyo',exe:'Cold noodles please',tip:'물냉면=in cold broth, 비빔냉면=with spicy sauce. A North Korean dish beloved across Korea.',lv:2},
-{ch:'볶음밥',py:'bokkeum-bap',en:'Fried Rice',cat:'🍚 Staples',desc:'Korean fried rice — often with kimchi, ham and egg',ex:'볶음밥 주세요',expy:'bokkeum-bap juseyo',exe:'Fried rice please',tip:'김치볶음밥=kimchi fried rice — one of Korea\'s most beloved comfort foods. Often topped with fried egg.',lv:2},
-{ch:'잡채',py:'japchae',en:'Glass Noodle Stir-fry',cat:'🍚 Staples',desc:'Stir-fried sweet potato glass noodles with vegetables and beef',ex:'잡채 주세요',expy:'japchae juseyo',exe:'Japchae please',tip:'잡=mixed + 채=vegetables. A festive dish always served at celebrations and holidays.',lv:2},
-{ch:'파전',py:'pajeon',en:'Spring Onion Pancake',cat:'🍳 Cooking',desc:'Crispy savoury pancake loaded with spring onions, often with seafood',ex:'파전 주세요',expy:'pajeon juseyo',exe:'Spring onion pancake please',tip:'Traditional rainy day food in Korea. 해물파전=seafood version. Eaten with makgeolli rice wine.',lv:2},
-{ch:'떡볶이',py:'tteokbokki',en:'Spicy Rice Cakes',cat:'🍚 Staples',desc:'Chewy cylinder rice cakes in fiery gochujang sauce — Korea\'s top street food',ex:'떡볶이 주세요',expy:'tteokbokki juseyo',exe:'Tteokbokki please',tip:'Korea\'s most popular street food. 떡=rice cake + 볶이=stir-fried. Endlessly customisable.',lv:2},
-{ch:'삼겹살구이',py:'samgyeopsal gui',en:'Grilled Pork Belly',cat:'🥩 Meat',desc:'Thick pork belly slices grilled at the table — Korea\'s most popular BBQ',ex:'삼겹살 구이 주세요',expy:'samgyeopsal gui juseyo',exe:'Grilled pork belly please',tip:'Wrap in lettuce with garlic, kimchi and ssamjang paste. The quintessential Korean BBQ experience.',lv:2},
-{ch:'치킨',py:'chikin',en:'Korean Fried Chicken',cat:'🥩 Meat',desc:'Double-fried super crispy fried chicken — one of Korea\'s greatest contributions to food',ex:'치킨 시켜요',expy:'chikin sikyeoyo',exe:'Order fried chicken',tip:'Double-fried = ultra crispy. Varieties: 양념치킨=spicy sauce, 간장치킨=soy garlic. Eaten with beer.',lv:2},
-{ch:'소주',py:'soju',en:'Soju',cat:'🍵 Drinks',desc:'Korea\'s national distilled spirit — clear, mild and ubiquitous',ex:'소주 한 병',expy:'soju han byeong',exe:'One bottle of soju',tip:'The world\'s best-selling spirit by volume. 21-25% alcohol. Drunk neat in small glasses. 건배!=cheers!',lv:2},
-{ch:'막걸리',py:'makgeolli',en:'Rice Wine / Makgeolli',cat:'🍵 Drinks',desc:'Milky, lightly fizzy traditional rice wine — the original Korean drink',ex:'막걸리 한 잔',expy:'makgeolli han jan',exe:'One glass of makgeolli',tip:'Low alcohol (6-9%), slightly sweet and sour. Traditionally drunk with 파전 on rainy days.',lv:2},
-{ch:'보리차',py:'boricha',en:'Barley Tea',cat:'🍵 Drinks',desc:'Roasted barley tea served free and cold at Korean restaurants',ex:'보리차 주세요',expy:'boricha juseyo',exe:'Barley tea please',tip:'Almost always provided free at Korean restaurants instead of water. Nutty and refreshing.',lv:2},
-{ch:'수정과',py:'sujeonggwa',en:'Cinnamon Punch',cat:'🍵 Drinks',desc:'Traditional spiced persimmon punch with cinnamon and ginger — sweet and warming',ex:'수정과 주세요',expy:'sujeonggwa juseyo',exe:'Cinnamon punch please',tip:'A festive traditional drink. Served chilled. Often comes with a floating pine nut.',lv:2},
-{ch:'식혜',py:'sikhye',en:'Sweet Rice Punch',cat:'🍵 Drinks',desc:'Traditional sweet fermented rice drink — milky and mildly sweet',ex:'식혜 주세요',expy:'sikhye juseyo',exe:'Sweet rice punch please',tip:'Korea\'s traditional dessert drink. The floating rice grains at the bottom are a treat.',lv:2},
-{ch:'호떡',py:'hotteok',en:'Sweet Filled Pancake',cat:'🍮 Desserts',desc:'Street food pancake filled with brown sugar, cinnamon and nuts',ex:'호떡 주세요',expy:'hotteok juseyo',exe:'Hotteok please',tip:'A winter street food classic. The sugar filling melts as it fries. Watch out — very hot inside!',lv:2},
-{ch:'팥빙수',py:'patbingsu',en:'Shaved Ice with Red Bean',cat:'🍮 Desserts',desc:'Finely shaved milk ice topped with sweet red bean, rice cakes and condensed milk',ex:'팥빙수 주세요',expy:'patbingsu juseyo',exe:'Shaved ice please',tip:'Korea\'s ultimate summer dessert. Modern versions add mango, strawberry or green tea.',lv:2},
-{ch:'약과',py:'yakgwa',en:'Honey Cookie',cat:'🍮 Desserts',desc:'Traditional deep-fried honey cookie made with flour, sesame oil and ginger',ex:'약과 주세요',expy:'yakgwa juseyo',exe:'Honey cookie please',tip:'약=medicine + 과=fruit/sweets. Traditionally given as medicine gifts. Recently had a huge trendy revival.',lv:2},
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// STAGE 3 — FULL DISH NAMES
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-{ch:'비빔밥',py:'bibimbap',en:'Mixed Rice Bowl',cat:'🍚 Staples',desc:'Colourful rice bowl with seasoned vegetables, meat, egg and gochujang — mix before eating',ex:'비빔밥 주세요',expy:'bibimbap juseyo',exe:'Bibimbap please',tip:'비비다=to mix + 밥=rice. Mix everything together with the red gochujang paste. Korea\'s most iconic dish.',lv:3},
-{ch:'돌솥비빔밥',py:'dolsot bibimbap',en:'Stone Pot Mixed Rice',cat:'🍚 Staples',desc:'Bibimbap served in a sizzling hot stone pot — creates a crispy rice crust at the bottom',ex:'돌솥비빔밥 주세요',expy:'dolsot bibimbap juseyo',exe:'Stone pot bibimbap please',tip:'돌솥=stone pot. Stir quickly to mix, then let the bottom rice go crispy (누룽지). A textural delight.',lv:3},
-{ch:'제육볶음',py:'jeyuk bokkeum',en:'Spicy Pork Stir-fry',cat:'🥩 Meat',desc:'Sliced pork belly stir-fried in a spicy gochujang and ginger sauce',ex:'제육볶음 주세요',expy:'jeyuk bokkeum juseyo',exe:'Spicy pork stir-fry please',tip:'제육=pork (archaic) + 볶음=stir-fry. One of Korea\'s most popular lunch dishes. Fiery and addictive.',lv:3},
-{ch:'닭갈비',py:'dak galbi',en:'Spicy Stir-fried Chicken',cat:'🥩 Meat',desc:'Marinated chicken stir-fried with vegetables and rice cakes in gochujang sauce',ex:'닭갈비 주세요',expy:'dakgalbi juseyo',exe:'Spicy chicken please',tip:'닭=chicken + 갈비=ribs. Despite the name there are no ribs — the name reflects the BBQ rib style cooking.',lv:3},
-{ch:'갈비찜',py:'galbijjim',en:'Braised Short Ribs',cat:'🥩 Meat',desc:'Beef or pork short ribs slow-braised in a sweet soy sauce with vegetables',ex:'갈비찜 주세요',expy:'galbijjim juseyo',exe:'Braised ribs please',tip:'갈비=ribs + 찜=braised. A celebratory dish for birthdays and holidays. Sweet, tender and rich.',lv:3},
-{ch:'보쌈',py:'bossam',en:'Pork Wraps',cat:'🥩 Meat',desc:'Boiled pork belly sliced thin and wrapped in cabbage or napa leaves with kimchi',ex:'보쌈 주세요',expy:'bossam juseyo',exe:'Pork wraps please',tip:'보 means to wrap. The pork is boiled until silky soft — very different from grilled. Served with oyster kimchi.',lv:3},
-{ch:'족발',py:'jokbal',en:'Braised Pig\'s Trotters',cat:'🥩 Meat',desc:'Pig\'s trotters braised in soy, ginger and star anise — gelatinous and rich',ex:'족발 주세요',exe:'Pig\'s trotters please',tip:'Traditionally eaten late at night. 족=foot + 발=foot. Served cold or warm with shrimp paste.',lv:3},
-{ch:'해물파전',py:'haemul pajeon',en:'Seafood Spring Onion Pancake',cat:'🍳 Cooking',desc:'Crispy pancake loaded with seafood, spring onion, squid and shrimp',ex:'해물파전 주세요',expy:'haemul pajeon juseyo',exe:'Seafood pancake please',tip:'The best pajeon is crispy on the outside, chewy inside. Dip in the soy-vinegar sauce.',lv:3},
-{ch:'순대국밥',py:'sundae gukbap',en:'Blood Sausage Soup Rice',cat:'🍲 Soups',desc:'Hearty soup with Korean blood sausage, organs and rice in pork bone broth',ex:'순대국밥 주세요',expy:'sundae gukbap juseyo',exe:'Sundae soup please',tip:'순대=Korean blood sausage stuffed with glass noodles and vegetables. A working-class comfort classic.',lv:3},
-{ch:'감자탕',py:'gamjatang',en:'Pork Spine Soup',cat:'🍲 Soups',desc:'Spicy pork backbone stew with potato and perilla seeds — deeply comforting',ex:'감자탕 주세요',expy:'gamjatang juseyo',exe:'Pork spine soup please',tip:'감자=potato. The name is debated — may refer to the pork spine (gamjappyeo) not the potato.',lv:3},
-{ch:'부대찌개',py:'budae jjigae',en:'Army Stew',cat:'🍲 Soups',desc:'Fusion stew born after the Korean War — kimchi, spam, hot dogs, ramen and beans in one pot',ex:'부대찌개 주세요',expy:'budae jjigae juseyo',exe:'Army stew please',tip:'부대=military base. Created from US military surplus foods after the Korean War. Now a beloved dish.',lv:3},
-{ch:'낙지볶음',py:'nakji bokkeum',en:'Spicy Stir-fried Octopus',cat:'🦐 Seafood',desc:'Chopped octopus stir-fried in a fiery gochujang sauce with spring onions',ex:'낙지볶음 주세요',expy:'nakji bokkeum juseyo',exe:'Spicy octopus please',tip:'낙지=small octopus. One of Korea\'s most addictively spicy dishes. Have extra rice ready.',lv:3},
-{ch:'간장게장',py:'ganjang gejang',en:'Soy Marinated Raw Crab',cat:'🦐 Seafood',desc:'Fresh raw crab marinated in soy sauce — nicknamed "rice thief" for how it makes you eat more',ex:'간장게장 주세요',expy:'ganjang gejang juseyo',exe:'Soy crab please',tip:'Called 밥도둑 (rice thief) — one spoonful and you need three bowls of rice. A true Korean delicacy.',lv:3},
-{ch:'갈치조림',py:'galchi jorim',en:'Braised Cutlassfish',cat:'🦐 Seafood',desc:'Silver scabbardfish braised in spicy radish and soy sauce',ex:'갈치조림 주세요',expy:'galchi jorim juseyo',exe:'Braised cutlassfish please',tip:'갈치=hairtail/scabbardfish. A Jeju Island specialty. The radish soaks up the spicy braising sauce.',lv:3},
-{ch:'삼겹살정식',py:'samgyeopsal jeongsik',en:'Pork Belly Set Meal',cat:'🥩 Meat',desc:'Full pork belly BBQ meal with all banchan sides, rice, soup and wrapping vegetables',ex:'삼겹살정식 주세요',expy:'samgyeopsal jeongsik juseyo',exe:'Pork belly set please',tip:'정식=full set meal. Comes with 쌈채소 (wrapping greens), 쌈장 (ssamjang paste), and numerous banchan.',lv:3},
-{ch:'김치볶음밥',py:'kimchi bokkeum-bap',en:'Kimchi Fried Rice',cat:'🍚 Staples',desc:'Fried rice with well-fermented kimchi, pork and topped with a fried egg',ex:'김치볶음밥 주세요',expy:'kimchi bokkeum-bap juseyo',exe:'Kimchi fried rice please',tip:'Best made with old, sour kimchi. The egg yolk on top is mixed in before eating. Simple perfection.',lv:3},
-{ch:'잔치국수',py:'janchi guksu',en:'Party Noodle Soup',cat:'🍚 Staples',desc:'Thin wheat noodles in light anchovy broth — served at weddings and celebrations',ex:'잔치국수 주세요',expy:'janchi guksu juseyo',exe:'Party noodles please',tip:'잔치=celebration/feast. Asking someone "when are you getting married?" is sometimes phrased as "when do we eat janchi guksu?"',lv:3},
-{ch:'빈대떡',py:'bindaetteok',en:'Mung Bean Pancake',cat:'🍳 Cooking',desc:'Crispy savoury pancake made from ground mung beans — a traditional street food',ex:'빈대떡 주세요',expy:'bindaetteok juseyo',exe:'Mung bean pancake please',tip:'A Gwangjang Market classic. Grind soaked mung beans, mix with kimchi and pork. Pan-fry until golden.',lv:3},
-{ch:'육회비빔밥',py:'yukhoe bibimbap',en:'Raw Beef Bibimbap',cat:'🍚 Staples',desc:'Bibimbap topped with thinly sliced raw beef seasoned with sesame and Asian pear',ex:'육회비빔밥 주세요',expy:'yukhoe bibimbap juseyo',exe:'Raw beef bibimbap please',tip:'육회=Korean beef tartare. The raw beef is marinated in soy, sesame, garlic and Asian pear.',lv:3},
+// ═══════════════════════════════════════
+// MENU DATA — 130+ items across 9 categories
+// ═══════════════════════════════════════
+const MENU = [
+  {cat:'🥩 Korean BBQ', items:[
+    {ch:'삼겹살',rom:'samgyeopsal',en:'Pork belly',desc:'Three-layer pork belly grilled at the table — Korea\'s most iconic BBQ',tag:'tp'},
+    {ch:'목살',rom:'moksal',en:'Pork neck',desc:'Pork neck — more fat marbling than belly, rich flavour'},
+    {ch:'항정살',rom:'hangjeongsal',en:'Jowl pork',desc:'Pork jowl — fatty, tender cut prized by BBQ lovers'},
+    {ch:'갈매기살',rom:'galmaegissal',en:'Diaphragm pork',desc:'Pork skirt/diaphragm — underrated, very flavourful cut'},
+    {ch:'불고기',rom:'bulgogi',en:'Marinated beef',desc:'Thinly sliced beef marinated in sweet soy, pear and sesame',tag:'tp'},
+    {ch:'LA갈비',rom:'LA galbi',en:'LA-style beef ribs',desc:'Flanken-cut beef short ribs — marinated and chargrilled',tag:'tp'},
+    {ch:'소갈비',rom:'so galbi',en:'Beef short ribs',desc:'Grilled bone-in beef ribs — rich and smoky'},
+    {ch:'차돌박이',rom:'chadolbagi',en:'Brisket',desc:'Thinly sliced beef brisket — quick-grilled, very fatty and fragrant'},
+    {ch:'꽃살',rom:'kkotssal',en:'Premium pork shoulder',desc:'Beautifully marbled shoulder — called "flower meat" for its pattern'},
+    {ch:'항살',rom:'hangsal',en:'Tenderloin pork',desc:'Lean, tender pork tenderloin strips'},
+    {ch:'닭갈비',rom:'dakgalbi',en:'Spicy chicken',desc:'Marinated chicken thigh stir-fried in gochujang with rice cakes',tag:'th'},
+    {ch:'쌈장',rom:'ssamjang',en:'Wrapping paste',desc:'Thick chilli-doenjang paste for wrapping meat in lettuce'},
+    {ch:'쌈채소',rom:'ssamchaeso',en:'Wrapping greens',desc:'Perilla, lettuce and sesame leaves for wrapping BBQ meat'},
+  ]},
+  {cat:'🍲 Jjigae & Soups', items:[
+    {ch:'김치찌개',rom:'kimchi jjigae',en:'Kimchi stew',desc:'Bubbling kimchi stew with pork and tofu — comfort food classic',tag:'tp'},
+    {ch:'된장찌개',rom:'doenjang jjigae',en:'Soybean paste stew',desc:'Earthy fermented soybean paste stew with tofu and courgette',tag:'tp'},
+    {ch:'순두부찌개',rom:'sundubu jjigae',en:'Soft tofu stew',desc:'Silky tofu in spicy seafood broth — add raw egg at the table'},
+    {ch:'부대찌개',rom:'budae jjigae',en:'Army stew',desc:'Kimchi, spam, hot dogs and ramen in one pot — Korean War fusion',tag:'tp'},
+    {ch:'청국장찌개',rom:'cheonggukjang jjigae',en:'Fermented soybean stew',desc:'Quick-fermented soybean stew — very pungent and deeply savoury'},
+    {ch:'해물탕',rom:'haemultang',en:'Spicy seafood hotpot',desc:'Fiery red hotpot with crab, clams, shrimp and vegetables'},
+    {ch:'설렁탕',rom:'seolleongtang',en:'Ox bone soup',desc:'Milky white ox bone broth simmered for hours — mild and nourishing'},
+    {ch:'갈비탕',rom:'galbitang',en:'Short rib soup',desc:'Clear beef short rib soup with glass noodles and radish'},
+    {ch:'삼계탕',rom:'samgyetang',en:'Ginseng chicken soup',desc:'Whole chicken stuffed with rice and ginseng — eaten in summer',tag:'tp'},
+    {ch:'감자탕',rom:'gamjatang',en:'Pork spine soup',desc:'Spicy pork backbone stew with potato and perilla seeds'},
+    {ch:'콩나물국',rom:'kongnamul guk',en:'Bean sprout soup',desc:'Light and clean bean sprout broth — classic hangover cure'},
+    {ch:'미역국',rom:'miyeok guk',en:'Seaweed soup',desc:'Silky seaweed in beef or seafood broth — eaten on birthdays'},
+    {ch:'선지해장국',rom:'seonji haejang guk',en:'Hangover soup',desc:'Ox blood and vegetable soup — the classic Korean hangover cure'},
+  ]},
+  {cat:'🍚 Rice & Noodles', items:[
+    {ch:'비빔밥',rom:'bibimbap',en:'Mixed rice bowl',desc:'Colourful rice with seasoned veg, egg and gochujang — mix before eating',tag:'tp'},
+    {ch:'돌솥비빔밥',rom:'dolsot bibimbap',en:'Stone pot bibimbap',desc:'Bibimbap in a sizzling stone pot — crispy rice crust at the bottom',tag:'tp'},
+    {ch:'볶음밥',rom:'bokkeum-bap',en:'Fried rice',desc:'Wok-fried rice — kimchi version (김치볶음밥) is beloved'},
+    {ch:'육회비빔밥',rom:'yukhoe bibimbap',en:'Raw beef bibimbap',desc:'Bibimbap topped with Korean beef tartare seasoned with Asian pear'},
+    {ch:'냉면',rom:'naengmyeon',en:'Cold noodles',desc:'Chewy buckwheat noodles in cold beef broth or with spicy sauce',tag:'tp'},
+    {ch:'물냉면',rom:'mul naengmyeon',en:'Cold noodles in broth',desc:'Buckwheat noodles in chilled, slightly sweet beef broth'},
+    {ch:'비빔냉면',rom:'bibim naengmyeon',en:'Spicy mixed cold noodles',desc:'Cold noodles tossed in fiery gochujang sauce'},
+    {ch:'잡채',rom:'japchae',en:'Glass noodle stir-fry',desc:'Sweet potato glass noodles with beef and colourful vegetables',tag:'tp'},
+    {ch:'국수',rom:'guksu',en:'Wheat noodles',desc:'Thin wheat noodles — served in soup or dry'},
+    {ch:'잔치국수',rom:'janchi guksu',en:'Party noodle soup',desc:'Thin noodles in light anchovy broth — served at celebrations'},
+    {ch:'칼국수',rom:'kalguksu',en:'Knife-cut noodles',desc:'Thick hand-cut wheat noodles in rich broth with clams'},
+    {ch:'떡국',rom:'tteokguk',en:'Rice cake soup',desc:'Oval rice cake slices in beef broth — eaten on New Year\'s Day'},
+    {ch:'오므라이스',rom:'omeuraiseu',en:'Omurice',desc:'Japanese-Korean fusion — fried rice wrapped in soft omelette'},
+  ]},
+  {cat:'🍳 Street Food & Snacks', items:[
+    {ch:'떡볶이',rom:'tteokbokki',en:'Spicy rice cakes',desc:'Chewy cylinder rice cakes in fiery gochujang sauce — #1 street food',tag:'th'},
+    {ch:'순대',rom:'sundae',en:'Blood sausage',desc:'Korean sausage stuffed with glass noodles, served with dipping salt'},
+    {ch:'튀김',rom:'twigim',en:'Korean fritters',desc:'Battered fried vegetables, squid and sweet potato — with tteokbokki'},
+    {ch:'어묵',rom:'eomuk',en:'Fish cake',desc:'Steamed or simmered fish cake skewers — classic street food'},
+    {ch:'파전',rom:'pajeon',en:'Spring onion pancake',desc:'Crispy savoury pancake with spring onions — rainy day food',tag:'tp'},
+    {ch:'해물파전',rom:'haemul pajeon',en:'Seafood pancake',desc:'Crispy pancake with squid, shrimp and spring onion'},
+    {ch:'김치전',rom:'kimchi jeon',en:'Kimchi pancake',desc:'Tangy fermented kimchi pancake — best with old kimchi'},
+    {ch:'감자전',rom:'gamja jeon',en:'Potato pancake',desc:'Crispy grated potato pancake — simple and satisfying'},
+    {ch:'호떡',rom:'hotteok',en:'Sweet pancake',desc:'Street food pancake filled with brown sugar and cinnamon — winter classic'},
+    {ch:'붕어빵',rom:'bungeoppang',en:'Fish-shaped bread',desc:'Fish-shaped pastry filled with sweet red bean — winter street food'},
+    {ch:'계란빵',rom:'gyeran ppang',en:'Egg bread',desc:'Soft bread baked with a whole egg inside — hot and filling'},
+    {ch:'오뎅탕',rom:'odeng tang',en:'Fish cake soup',desc:'Fish cake skewers simmered in light broth — served at pojangmacha'},
+    {ch:'닭꼬치',rom:'dak kkochi',en:'Chicken skewers',desc:'Grilled chicken pieces on skewers with sweet-spicy sauce'},
+  ]},
+  {cat:'🥘 Main Dishes', items:[
+    {ch:'제육볶음',rom:'jeyuk bokkeum',en:'Spicy pork stir-fry',desc:'Sliced pork belly stir-fried in gochujang and ginger sauce',tag:'th'},
+    {ch:'보쌈',rom:'bossam',en:'Pork wraps',desc:'Boiled pork belly wrapped in cabbage with kimchi and oysters'},
+    {ch:'족발',rom:'jokbal',en:'Pig\'s trotters',desc:'Braised pig\'s feet in soy and spices — gelatinous and rich'},
+    {ch:'갈비찜',rom:'galbi jjim',en:'Braised short ribs',desc:'Beef short ribs slow-braised in sweet soy with chestnuts and radish',tag:'tp'},
+    {ch:'간장게장',rom:'ganjang gejang',en:'Soy crab',desc:'Raw crab marinated in soy sauce — called "rice thief"',tag:'tp'},
+    {ch:'낙지볶음',rom:'nakji bokkeum',en:'Spicy octopus',desc:'Chopped octopus stir-fried in a fiery gochujang sauce',tag:'th'},
+    {ch:'오징어볶음',rom:'ojingeo bokkeum',en:'Spicy squid',desc:'Sliced squid stir-fried in chilli sauce with onion and courgette',tag:'th'},
+    {ch:'생선구이',rom:'saengseon gui',en:'Grilled fish',desc:'Salt-grilled fish — mackerel (고등어) is the most popular'},
+    {ch:'고등어조림',rom:'godeungeo jorim',en:'Braised mackerel',desc:'Mackerel braised in spicy radish and soy sauce',tag:'th'},
+    {ch:'간장닭조림',rom:'ganjang dak jorim',en:'Soy braised chicken',desc:'Chicken pieces braised in sweet soy and ginger'},
+    {ch:'두부조림',rom:'dubu jorim',en:'Braised tofu',desc:'Pan-fried tofu braised in spicy-sweet soy sauce',tag:'tv'},
+    {ch:'계란말이',rom:'gyeran mari',en:'Rolled omelette',desc:'Soft Korean rolled egg omelette with carrot and spring onion'},
+    {ch:'잡채만두',rom:'japchae mandu',en:'Glass noodle dumplings',desc:'Dumplings filled with japchae — pan-fried or steamed'},
+    {ch:'만두',rom:'mandu',en:'Korean dumplings',desc:'Pork and kimchi or vegetable dumplings — steamed, fried or in soup'},
+  ]},
+  {cat:'🍗 Chicken', items:[
+    {ch:'치킨',rom:'chikin',en:'Korean fried chicken',desc:'Double-fried ultra-crispy fried chicken — served with beer',tag:'tp'},
+    {ch:'양념치킨',rom:'yangnyeom chikin',en:'Spicy sauce chicken',desc:'Fried chicken coated in sweet-spicy red sauce',tag:'th'},
+    {ch:'간장치킨',rom:'ganjang chikin',en:'Soy garlic chicken',desc:'Fried chicken glazed with soy and caramelised garlic'},
+    {ch:'파닭',rom:'padak',en:'Spring onion chicken',desc:'Fried chicken piled with fresh julienned spring onion'},
+    {ch:'삼계탕',rom:'samgyetang',en:'Ginseng chicken soup',desc:'Whole young chicken stuffed with rice, ginseng and jujube',tag:'tp'},
+    {ch:'닭한마리',rom:'dak hanmari',en:'One whole chicken',desc:'Whole chicken boiled in pot at the table — add kalguksu noodles after'},
+    {ch:'찜닭',rom:'jjim dak',en:'Braised chicken',desc:'Whole chicken braised with potatoes, glass noodles and soy'},
+    {ch:'닭갈비',rom:'dakgalbi',en:'Spicy stir-fried chicken',desc:'Chicken thigh marinated in gochujang stir-fried with rice cakes',tag:'th'},
+  ]},
+  {cat:'🥬 Vegetarian & Sides', items:[
+    {ch:'김치',rom:'kimchi',en:'Kimchi',desc:'Fermented spicy napa cabbage — Korea\'s national dish',tag:'tv'},
+    {ch:'깍두기',rom:'kkakdugi',en:'Radish kimchi',desc:'Cubed radish kimchi — crunchy and refreshing',tag:'tv'},
+    {ch:'오이소박이',rom:'oi sobagi',en:'Stuffed cucumber kimchi',desc:'Fresh cucumber stuffed with chilli and spring onion',tag:'tv'},
+    {ch:'콩나물무침',rom:'kongnamul muchim',en:'Bean sprout salad',desc:'Blanched bean sprouts seasoned with sesame and chilli',tag:'tv'},
+    {ch:'시금치나물',rom:'sigeumchi namul',en:'Spinach seasoned salad',desc:'Blanched spinach tossed with sesame oil, garlic and soy',tag:'tv'},
+    {ch:'고사리나물',rom:'gosari namul',en:'Bracken fern salad',desc:'Sautéed bracken fern seasoned with soy and sesame',tag:'tv'},
+    {ch:'숙주나물',rom:'sukju namul',en:'Mung bean sprout salad',desc:'Blanched mung bean sprouts with sesame oil and garlic',tag:'tv'},
+    {ch:'두부',rom:'dubu',en:'Tofu',desc:'Served steamed, fried or in stew — silken or firm varieties',tag:'tv'},
+    {ch:'버섯구이',rom:'beoseot gui',en:'Grilled mushrooms',desc:'Assorted mushrooms grilled at the BBQ table — king oyster and enoki'},
+    {ch:'계란찜',rom:'gyeran jjim',en:'Steamed egg custard',desc:'Fluffy steamed egg custard in a stone pot — silky and light'},
+    {ch:'잡채',rom:'japchae',en:'Glass noodle stir-fry',desc:'Sweet potato glass noodles with vegetables — classic banchan or main',tag:'tv'},
+    {ch:'떡',rom:'tteok',en:'Rice cake',desc:'Chewy steamed rice cakes — eaten as snack, in soups or stir-fried'},
+    {ch:'밥',rom:'bap',en:'Steamed rice',desc:'Short-grain white rice — the foundation of every Korean meal'},
+  ]},
+  {cat:'🍮 Desserts', items:[
+    {ch:'팥빙수',rom:'patbingsu',en:'Shaved ice',desc:'Finely shaved milk ice with sweet red bean, mochi and condensed milk',tag:'tp'},
+    {ch:'호떡',rom:'hotteok',en:'Sweet pancake',desc:'Crispy pancake filled with brown sugar, cinnamon and walnut'},
+    {ch:'약과',rom:'yakgwa',en:'Honey cookie',desc:'Deep-fried honey and sesame cookie — traditional confection'},
+    {ch:'식혜',rom:'sikhye',en:'Sweet rice punch',desc:'Traditional sweet fermented rice drink — milky and mildly sweet'},
+    {ch:'수정과',rom:'sujeonggwa',en:'Cinnamon punch',desc:'Spiced persimmon punch with cinnamon and ginger — served cold'},
+    {ch:'떡',rom:'tteok',en:'Rice cake',desc:'Soft chewy rice cakes — 인절미 (injeolmi) dusted in roasted soybean flour'},
+    {ch:'찹쌀도넛',rom:'chapssal donut',en:'Sticky rice doughnut',desc:'Chewy fried doughnut made with glutinous rice flour'},
+    {ch:'붕어빵',rom:'bungeoppang',en:'Fish bread',desc:'Fish-shaped waffle with sweet red bean or custard filling'},
+    {ch:'아이스크림',rom:'aiseukeullim',en:'Ice cream',desc:'Soft serve is ubiquitous — 소프트아이스크림 or 아이스크림'},
+  ]},
+  {cat:'🍵 Drinks', items:[
+    {ch:'소주',rom:'soju',en:'Soju',desc:'Korea\'s clear distilled spirit — the world\'s best-selling liquor',tag:'tp'},
+    {ch:'막걸리',rom:'makgeolli',en:'Rice wine',desc:'Milky, lightly fizzy traditional rice wine — low alcohol',tag:'tp'},
+    {ch:'맥주',rom:'maekju',en:'Beer',desc:'Korean lager — Hite, Cass, Terra or Kloud'},
+    {ch:'소맥',rom:'somaek',en:'Soju bomb',desc:'Soju shot dropped into beer — the classic Korean bar drink'},
+    {ch:'보리차',rom:'boricha',en:'Barley tea',desc:'Roasted barley tea served free and cold at most restaurants',tag:'tv'},
+    {ch:'매실차',rom:'maesil cha',en:'Plum tea',desc:'Sweet and sour plum extract drink — hot or cold'},
+    {ch:'유자차',rom:'yuja cha',en:'Yuzu honey tea',desc:'Korean citron tea — honey and yuzu peel in hot water'},
+    {ch:'식혜',rom:'sikhye',en:'Sweet rice punch',desc:'Traditional sweet fermented rice drink — a dessert beverage'},
+    {ch:'물',rom:'mul',en:'Water',desc:'Still water — usually served free at Korean restaurants',tag:'tv'},
+    {ch:'오렌지주스',rom:'orenji juseu',en:'Orange juice',desc:'Fresh or bottled orange juice'},
+    {ch:'콜라',rom:'kolla',en:'Cola',desc:'Soft drink'},
+    {ch:'유산균음료',rom:'yusangyun eumnyo',en:'Probiotic drink',desc:'Yakult-style fermented dairy drink — very popular in Korea'},
+  ]},
 ];
 
-// ═══════════════════════════════════════════════
-// PHRASES
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+// PHRASES — 100+ across 9 categories
+// ═══════════════════════════════════════
 const PHRASES = {
 '👋 Greetings':[
-  {cn:'안녕하세요',py:'annyeonghaseyo',en:'Hello / Good day'},
-  {cn:'안녕히 계세요',py:'annyeonghi gyeseyo',en:'Goodbye (said to person staying)'},
-  {cn:'안녕히 가세요',py:'annyeonghi gaseyo',en:'Goodbye (said to person leaving)'},
-  {cn:'감사합니다',py:'gamsahamnida',en:'Thank you (formal)'},
-  {cn:'고마워요',py:'gomawoyo',en:'Thank you (casual)'},
-  {cn:'천만에요',py:'cheonmaneyo',en:'You\'re welcome'},
-  {cn:'죄송합니다',py:'joesonghamnida',en:'I\'m sorry / Excuse me (formal)'},
-  {cn:'괜찮아요',py:'gwaenchanayo',en:'It\'s OK / No problem'},
-  {cn:'네',py:'ne',en:'Yes'},
-  {cn:'아니요',py:'aniyo',en:'No'},
-  {cn:'잘 부탁드립니다',py:'jal butakdeurimnida',en:'Please take care of me / Nice to meet you'},
-  {cn:'한국어를 못해요',py:'hangugeoreul mothaeyo',en:'I don\'t speak Korean'},
-  {cn:'영어 할 수 있어요?',py:'yeongeo hal su isseoyo',en:'Do you speak English?'},
-  {cn:'천천히 말해주세요',py:'cheoncheonhi malhaejuseyo',en:'Please speak more slowly'},
-  {cn:'다시 말해주세요',py:'dasi malhaejuseyo',en:'Please say that again'},
+  {jp:'안녕하세요',rom:'annyeonghaseyo',en:'Hello / Good day'},
+  {jp:'안녕히 계세요',rom:'annyeonghi gyeseyo',en:'Goodbye (said to person staying)'},
+  {jp:'안녕히 가세요',rom:'annyeonghi gaseyo',en:'Goodbye (said to person leaving)'},
+  {jp:'감사합니다',rom:'gamsahamnida',en:'Thank you (formal)'},
+  {jp:'고마워요',rom:'gomawoyo',en:'Thank you (casual)'},
+  {jp:'천만에요',rom:'cheonmaneyo',en:'You\'re welcome'},
+  {jp:'죄송합니다',rom:'joesonghamnida',en:'I\'m sorry / Excuse me (formal)'},
+  {jp:'괜찮아요',rom:'gwaenchanayo',en:'It\'s OK / No problem'},
+  {jp:'네',rom:'ne',en:'Yes'},
+  {jp:'아니요',rom:'aniyo',en:'No'},
+  {jp:'잘 부탁드립니다',rom:'jal butakdeurimnida',en:'Please look after me / Nice to meet you'},
+  {jp:'한국어를 못해요',rom:'hangugeoreul mothaeyo',en:'I don\'t speak Korean'},
+  {jp:'영어 할 수 있어요?',rom:'yeongeo hal su isseoyo?',en:'Do you speak English?'},
+  {jp:'천천히 말해주세요',rom:'cheoncheonhi malhaejuseyo',en:'Please speak more slowly'},
+  {jp:'다시 말해주세요',rom:'dasi malhaejuseyo',en:'Please say that again'},
 ],
 '🪑 Arriving & Seating':[
-  {cn:'몇 분이세요?',py:'myeot buniseyo',en:'How many people? (staff asks)'},
-  {cn:'두 명이요',py:'du myeongniyo',en:'Two people'},
-  {cn:'네 명이요',py:'ne myeongniyo',en:'Four people'},
-  {cn:'예약했어요',py:'yeyakhaesseoyo',en:'I have a reservation'},
-  {cn:'예약 안 했어요',py:'yeyak an haesseoyo',en:'I don\'t have a reservation'},
-  {cn:'자리 있어요?',py:'jari isseoyo',en:'Do you have a table available?'},
-  {cn:'여기 앉아도 돼요?',py:'yeogi anjado dwaeyo',en:'Can we sit here?'},
-  {cn:'얼마나 기다려야 해요?',py:'eolmana gidaryeoya haeyo',en:'How long is the wait?'},
-  {cn:'창가 자리 주세요',py:'changga jari juseyo',en:'A window seat please'},
-  {cn:'메뉴 주세요',py:'menyu juseyo',en:'Menu please'},
-  {cn:'조용한 자리 있어요?',py:'joyonghan jari isseoyo',en:'Is there a quieter table?'},
+  {jp:'몇 분이세요?',rom:'myeot buniseyo?',en:'How many people? (staff asks you)'},
+  {jp:'한 명이요',rom:'han myeongniyo',en:'Just one person'},
+  {jp:'두 명이요',rom:'du myeongniyo',en:'Two people'},
+  {jp:'세 명이요',rom:'se myeongniyo',en:'Three people'},
+  {jp:'네 명이요',rom:'ne myeongniyo',en:'Four people'},
+  {jp:'여섯 명이요',rom:'yeoseot myeongniyo',en:'Six people'},
+  {jp:'예약했어요',rom:'yeyakhaesseoyo',en:'I have a reservation'},
+  {jp:'예약 안 했어요',rom:'yeyak an haesseoyo',en:'I don\'t have a reservation'},
+  {jp:'자리 있어요?',rom:'jari isseoyo?',en:'Do you have a table available?'},
+  {jp:'얼마나 기다려야 해요?',rom:'eolmana gidaryeoya haeyo?',en:'How long is the wait?'},
+  {jp:'창가 자리 주세요',rom:'changga jari juseyo',en:'A window seat please'},
+  {jp:'금연석 주세요',rom:'geumyeonseok juseyo',en:'Non-smoking section please'},
+  {jp:'메뉴 주세요',rom:'menyu juseyo',en:'Menu please'},
+  {jp:'영어 메뉴 있어요?',rom:'yeongeo menyu isseoyo?',en:'Is there an English menu?'},
+  {jp:'몇 시까지 해요?',rom:'myeot sikaji haeyo?',en:'What time do you close?'},
 ],
-'📋 Ordering Food':[
-  {cn:'주문할게요',py:'jumunhalgeyo',en:'I would like to order'},
-  {cn:'저기요!',py:'jeogiyo',en:'Excuse me! (to call waiter)'},
-  {cn:'이거 주세요',py:'igeo juseyo',en:'This one please (pointing at menu)'},
-  {cn:'뭐가 맛있어요?',py:'mwoga massisseoyo',en:'What is delicious here?'},
-  {cn:'추천해 주세요',py:'chucheonhae juseyo',en:'Please recommend something'},
-  {cn:'오늘의 특선은 뭐예요?',py:'oneului teukseon-eun mwoyeyo',en:'What is today\'s special?'},
-  {cn:'하나 더 주세요',py:'hana deo juseyo',en:'One more please'},
-  {cn:'이게 뭐예요?',py:'ige mwoyeyo',en:'What is this?'},
-  {cn:'어떻게 먹어요?',py:'eotteoke meogeoyo',en:'How do you eat this?'},
-  {cn:'포장해 주세요',py:'pojanghae juseyo',en:'Takeaway / To go please'},
-  {cn:'반찬 더 주세요',py:'banchan deo juseyo',en:'More banchan (side dishes) please'},
-  {cn:'밥 더 주세요',py:'bap deo juseyo',en:'More rice please'},
-  {cn:'물 주세요',py:'mul juseyo',en:'Water please'},
-  {cn:'맛있어요!',py:'massisseoyo',en:'Delicious!'},
-  {cn:'너무 맛있어요',py:'neomu massisseoyo',en:'Extremely delicious!'},
+'📋 Ordering':[
+  {jp:'저기요!',rom:'jeogiyo!',en:'Excuse me! (calling the waiter)'},
+  {jp:'주문할게요',rom:'jumunhalgeyo',en:'I\'d like to order'},
+  {jp:'이거 주세요',rom:'igeo juseyo',en:'This one please (pointing)'},
+  {jp:'뭐가 맛있어요?',rom:'mwoga massisseoyo?',en:'What is delicious here?'},
+  {jp:'추천해 주세요',rom:'chucheonhae juseyo',en:'Please recommend something'},
+  {jp:'오늘의 특선은 뭐예요?',rom:'oneului teukseon-eun mwoyeyo?',en:'What is today\'s special?'},
+  {jp:'하나 더 주세요',rom:'hana deo juseyo',en:'One more please'},
+  {jp:'이게 뭐예요?',rom:'ige mwoyeyo?',en:'What is this?'},
+  {jp:'어떻게 먹어요?',rom:'eotteoke meogeoyo?',en:'How do you eat this?'},
+  {jp:'포장해 주세요',rom:'pojanghae juseyo',en:'To take away please'},
+  {jp:'반찬 더 주세요',rom:'banchan deo juseyo',en:'More side dishes (banchan) please'},
+  {jp:'밥 더 주세요',rom:'bap deo juseyo',en:'More rice please'},
+  {jp:'소주 한 병 주세요',rom:'soju han byeong juseyo',en:'One bottle of soju please'},
+  {jp:'맥주 두 병 주세요',rom:'maekju du byeong juseyo',en:'Two bottles of beer please'},
+  {jp:'주문이 잘못됐어요',rom:'jumun-i jalmotdwaesseoyo',en:'There\'s a mistake with my order'},
 ],
 '🌶️ Dietary & Allergies':[
-  {cn:'안 맵게 해주세요',py:'an maepge haejuseyo',en:'Please make it not spicy'},
-  {cn:'조금만 맵게',py:'jogeumman maepge',en:'Just a little spicy'},
-  {cn:'저는 채식주의자예요',py:'jeoneun chaesikjuuijayeyo',en:'I am vegetarian'},
-  {cn:'고기 안 먹어요',py:'gogi an meogeoyo',en:'I don\'t eat meat'},
-  {cn:'돼지고기 안 먹어요',py:'dwaejigogi an meogeoyo',en:'I don\'t eat pork'},
-  {cn:'해물 안 먹어요',py:'haemul an meogeoyo',en:'I don\'t eat seafood'},
-  {cn:'땅콩 알레르기가 있어요',py:'ttangkong allereugi-ga isseoyo',en:'I am allergic to peanuts'},
-  {cn:'글루텐 알레르기가 있어요',py:'geulluten allereugi-ga isseoyo',en:'I am allergic to gluten'},
-  {cn:'소금 적게 넣어주세요',py:'sogeum jeokge neoeojuseyo',en:'Less salt please'},
-  {cn:'기름 적게 넣어주세요',py:'gireum jeokge neoeojuseyo',en:'Less oil please'},
-  {cn:'할랄 음식 있어요?',py:'hallal eumsik isseoyo',en:'Do you have halal food?'},
+  {jp:'안 맵게 해주세요',rom:'an maepge haejuseyo',en:'Please make it not spicy'},
+  {jp:'조금만 맵게',rom:'jogeumman maepge',en:'Just a little spicy'},
+  {jp:'아주 맵게 해주세요',rom:'aju maepge haejuseyo',en:'Very spicy please'},
+  {jp:'고기 안 먹어요',rom:'gogi an meogeoyo',en:'I don\'t eat meat'},
+  {jp:'돼지고기 안 먹어요',rom:'dwaejigogi an meogeoyo',en:'I don\'t eat pork'},
+  {jp:'해물 안 먹어요',rom:'haemul an meogeoyo',en:'I don\'t eat seafood'},
+  {jp:'저는 채식주의자예요',rom:'jeoneun chaesikjuuijayeyo',en:'I am vegetarian'},
+  {jp:'비건이에요',rom:'bigeoni-eyo',en:'I am vegan'},
+  {jp:'땅콩 알레르기가 있어요',rom:'ttangkong allereugi-ga isseoyo',en:'I have a peanut allergy'},
+  {jp:'글루텐 알레르기가 있어요',rom:'geulluten allereugi-ga isseoyo',en:'I have a gluten allergy'},
+  {jp:'달걀 알레르기가 있어요',rom:'dalgyal allereugi-ga isseoyo',en:'I have an egg allergy'},
+  {jp:'〜이/가 들어 있나요?',rom:'〜 i/ga deureo innayo?',en:'Does this contain 〜?'},
+  {jp:'소금 적게 해주세요',rom:'sogeum jeokge haejuseyo',en:'Less salt please'},
+  {jp:'할랄 음식 있어요?',rom:'hallal eumsik isseoyo?',en:'Do you have halal food?'},
 ],
-'🚻 Facilities & Requests':[
-  {cn:'화장실이 어디예요?',py:'hwajangsiri eodiyeyo',en:'Where is the toilet?'},
-  {cn:'화장실 어디예요?',py:'hwajangil eodiyeyo',en:'Where\'s the toilet? (casual)'},
-  {cn:'젓가락 주세요',py:'jeotgarak juseyo',en:'Chopsticks please'},
-  {cn:'포크 주세요',py:'pokeu juseyo',en:'Fork please'},
-  {cn:'숟가락 주세요',py:'sutgarak juseyo',en:'Spoon please'},
-  {cn:'냅킨 주세요',py:'naepkin juseyo',en:'Napkin please'},
-  {cn:'뜨거운 물 주세요',py:'tteugeoun mul juseyo',en:'Hot water please'},
-  {cn:'얼음물 주세요',py:'eoreummal juseyo',en:'Iced water please'},
-  {cn:'데워 주세요',py:'dewo juseyo',en:'Please heat this up'},
-  {cn:'제가 주문한 게 아니에요',py:'jega jumunhan ge anieyo',en:'This is not what I ordered'},
-  {cn:'그릇 바꿔 주세요',py:'geureut bakkwo juseyo',en:'Please change my bowl/plate'},
-  {cn:'앞치마 주세요',py:'apchima juseyo',en:'Apron please (for BBQ)'},
-  {cn:'가위 주세요',py:'gawi juseyo',en:'Scissors please (to cut meat)'},
+'🚻 During the Meal':[
+  {jp:'화장실이 어디예요?',rom:'hwajangsiri eodiyeyo?',en:'Where is the toilet?'},
+  {jp:'젓가락 주세요',rom:'jeotgarak juseyo',en:'Chopsticks please'},
+  {jp:'숟가락 주세요',rom:'sutgarak juseyo',en:'Spoon please'},
+  {jp:'포크 주세요',rom:'pokeu juseyo',en:'Fork please'},
+  {jp:'물 주세요',rom:'mul juseyo',en:'Water please'},
+  {jp:'얼음물 주세요',rom:'eoreummal juseyo',en:'Iced water please'},
+  {jp:'뜨거운 물 주세요',rom:'tteugeoun mul juseyo',en:'Hot water please'},
+  {jp:'냅킨 주세요',rom:'naepkin juseyo',en:'Napkin please'},
+  {jp:'앞치마 주세요',rom:'apchima juseyo',en:'Apron please (for BBQ)'},
+  {jp:'가위 주세요',rom:'gawi juseyo',en:'Scissors please (to cut meat)'},
+  {jp:'집게 주세요',rom:'jipge juseyo',en:'Tongs please (for BBQ)'},
+  {jp:'불 켜 주세요',rom:'bul kyeo juseyo',en:'Please turn on the grill'},
+  {jp:'고기 구워드릴까요?',rom:'gogi guweo deurilkkayo?',en:'Shall I grill the meat for you? (staff)'},
+  {jp:'그릇 바꿔 주세요',rom:'geureut bakkwo juseyo',en:'Please change my bowl'},
+  {jp:'데워 주세요',rom:'dewo juseyo',en:'Please heat this up'},
 ],
-'💳 Paying the Bill':[
-  {cn:'계산해 주세요',py:'gyesanhae juseyo',en:'Bill please'},
-  {cn:'얼마예요?',py:'eolmayeyo',en:'How much is it?'},
-  {cn:'신용카드 돼요?',py:'sinyongkadeu dwaeyo',en:'Do you accept credit card?'},
-  {cn:'영수증 주세요',py:'yeongsujeung juseyo',en:'Receipt please'},
-  {cn:'제가 낼게요',py:'jega naelgeyo',en:'I will pay / It\'s my treat'},
-  {cn:'나눠서 내요',py:'nanwoseo naeyo',en:'Let\'s split the bill'},
-  {cn:'거스름돈은 됐어요',py:'geoseureumdoneun dwaesseoyo',en:'Keep the change'},
-  {cn:'봉사료 포함이에요?',py:'bongsaryo pohamieyo',en:'Is service charge included?'},
+'💳 Paying':[
+  {jp:'계산해 주세요',rom:'gyesanhae juseyo',en:'The bill please'},
+  {jp:'얼마예요?',rom:'eolmayeyo?',en:'How much is it?'},
+  {jp:'신용카드 돼요?',rom:'sinyongkadeu dwaeyo?',en:'Do you accept credit card?'},
+  {jp:'현금만 돼요?',rom:'hyeongeum-man dwaeyo?',en:'Cash only?'},
+  {jp:'영수증 주세요',rom:'yeongsujeung juseyo',en:'Receipt please'},
+  {jp:'제가 낼게요',rom:'jega naelgeyo',en:'It\'s my treat'},
+  {jp:'나눠서 내요',rom:'nanwoseo naeyo',en:'Let\'s split the bill'},
+  {jp:'거스름돈은 됐어요',rom:'geoseureumdoneun dwaesseoyo',en:'Keep the change'},
+  {jp:'봉사료 포함이에요?',rom:'bongsaryo pohamieyo?',en:'Is service charge included?'},
+  {jp:'이거 얼마예요?',rom:'igeo eolmayeyo?',en:'How much is this one?'},
 ],
-'🥂 Toasts & Table Customs':[
-  {cn:'건배!',py:'geonbae',en:'Cheers! (bottoms up)'},
-  {cn:'원샷!',py:'wonsyat',en:'Down in one! (one shot)'},
-  {cn:'잘 먹겠습니다',py:'jal meokgesseumnida',en:'I will eat well (said before eating)'},
-  {cn:'잘 먹었습니다',py:'jal meogeosseumnida',en:'I ate well (said after eating)'},
-  {cn:'많이 드세요',py:'mani deuseyo',en:'Please eat a lot (host to guest)'},
-  {cn:'천천히 드세요',py:'cheoncheonhi deuseyo',en:'Eat slowly and enjoy'},
-  {cn:'배불러요',py:'baebulleoyo',en:'I\'m full'},
-  {cn:'진짜 맛있어요',py:'jinjja massisseoyo',en:'This is really delicious'},
-  {cn:'또 올게요',py:'tto olgeyo',en:'I will come again'},
-  {cn:'분위기 좋아요',py:'bunwigi joayo',en:'The atmosphere is nice'},
+'🥂 Toasts & BBQ Customs':[
+  {jp:'건배!',rom:'geonbae!',en:'Cheers! (bottoms up)'},
+  {jp:'원샷!',rom:'wonsyat!',en:'Down in one!'},
+  {jp:'잘 먹겠습니다',rom:'jal meokgesseumnida',en:'I will eat well (before eating)'},
+  {jp:'잘 먹었습니다',rom:'jal meogeosseumnida',en:'I ate well (after eating)'},
+  {jp:'많이 드세요',rom:'mani deuseyo',en:'Please eat a lot'},
+  {jp:'배불러요',rom:'baebulleoyo',en:'I\'m full'},
+  {jp:'또 올게요',rom:'tto olgeyo',en:'I\'ll come again'},
+  {jp:'진짜 맛있어요',rom:'jinjja massisseoyo',en:'This is really delicious'},
+  {jp:'고기 다 됐어요',rom:'gogi da dwaesseoyo',en:'The meat is ready'},
+  {jp:'뒤집어 주세요',rom:'dwijijeo juseyo',en:'Please flip the meat'},
+  {jp:'잘라 주세요',rom:'jalla juseyo',en:'Please cut it'},
 ],
 '😋 Compliments & Reactions':[
-  {cn:'대박이에요!',py:'daebagieyo',en:'Amazing! / Awesome! (daebak)'},
-  {cn:'진짜 맛있다!',py:'jinjja masitda',en:'So delicious! (casual exclamation)'},
-  {cn:'향기 좋아요',py:'hyanggi joayo',en:'Smells wonderful'},
-  {cn:'부드러워요',py:'budeureowoyo',en:'So tender / soft'},
-  {cn:'바삭바삭해요',py:'basak basakhaeyo',en:'So crispy!'},
-  {cn:'너무 매워요',py:'neomu maewoyo',en:'Too spicy! (surprised)'},
-  {cn:'달콤해요',py:'dalkomhaeyo',en:'So sweet!'},
-  {cn:'양이 많아요',py:'yangi manayo',en:'Very generous portion'},
-  {cn:'서비스 좋아요',py:'seobiseu joayo',en:'Great service'},
-  {cn:'또 오고 싶어요',py:'tto ogo sipeoyo',en:'I want to come again'},
-  {cn:'친구 데려올게요',py:'chingu deryeoolgayo',en:'I\'ll bring friends next time'},
+  {jp:'맛있어요!',rom:'massisseoyo!',en:'Delicious!'},
+  {jp:'너무 맛있어요!',rom:'neomu massisseoyo!',en:'So delicious!'},
+  {jp:'대박이에요!',rom:'daebagieyo!',en:'Amazing! (daebak)'},
+  {jp:'진짜 맛있다!',rom:'jinjja masitda!',en:'So good! (casual exclamation)'},
+  {jp:'향기 좋아요',rom:'hyanggi joayo',en:'Smells wonderful'},
+  {jp:'부드러워요',rom:'budeureowoyo',en:'So tender'},
+  {jp:'바삭바삭해요',rom:'basak basakhaeyo',en:'So crispy!'},
+  {jp:'너무 매워요!',rom:'neomu maewoyo!',en:'Too spicy! (exclamation)'},
+  {jp:'달콤해요',rom:'dalkomhaeyo',en:'So sweet!'},
+  {jp:'양이 많아요',rom:'yangi manayo',en:'The portion is very generous'},
+  {jp:'서비스 좋아요',rom:'seobiseu joayo',en:'Great service'},
+  {jp:'분위기 좋아요',rom:'bunwigi joayo',en:'Great atmosphere'},
+  {jp:'또 오고 싶어요',rom:'tto ogo sipeoyo',en:'I want to come again'},
+  {jp:'친구 데려올게요',rom:'chingu deryeoolgayo',en:'I\'ll bring friends next time'},
+],
+'🔢 Numbers & Counters':[
+  {jp:'일 (1)',rom:'il',en:'One (Sino-Korean)'},
+  {jp:'이 (2)',rom:'i',en:'Two (Sino-Korean)'},
+  {jp:'삼 (3)',rom:'sam',en:'Three (Sino-Korean)'},
+  {jp:'사 (4)',rom:'sa',en:'Four (Sino-Korean)'},
+  {jp:'오 (5)',rom:'o',en:'Five (Sino-Korean)'},
+  {jp:'육 (6)',rom:'yuk',en:'Six (Sino-Korean)'},
+  {jp:'칠 (7)',rom:'chil',en:'Seven (Sino-Korean)'},
+  {jp:'팔 (8)',rom:'pal',en:'Eight (Sino-Korean)'},
+  {jp:'구 (9)',rom:'gu',en:'Nine (Sino-Korean)'},
+  {jp:'십 (10)',rom:'sip',en:'Ten (Sino-Korean)'},
+  {jp:'하나',rom:'hana',en:'One (native Korean — for counting)'},
+  {jp:'둘',rom:'dul',en:'Two (native Korean)'},
+  {jp:'셋',rom:'set',en:'Three (native Korean)'},
+  {jp:'한 명',rom:'han myeong',en:'One person'},
+  {jp:'두 명',rom:'du myeong',en:'Two people'},
+  {jp:'한 병',rom:'han byeong',en:'One bottle'},
+  {jp:'한 잔',rom:'han jan',en:'One glass / one cup'},
+  {jp:'한 그릇',rom:'han geureut',en:'One bowl'},
 ],
 };
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════
-let S=JSON.parse(localStorage.getItem('krMenu_v1')||'{}');
-S.streak=S.streak||0;S.lastDate=S.lastDate||'';S.seenDates=S.seenDates||{};
-S.qR=S.qR||0;S.qT=S.qT||0;S.days=S.days||0;S.stageOverride=S.stageOverride||0;
-function save(){localStorage.setItem('krMenu_v1',JSON.stringify(S));}
+// ═══════════════════════════════════════
+const LS = 'krMenu_v1';
+let S = {streak:0,lastDate:'',seenDates:{},qCorrect:0,qTotal:0,days:0,seenMenu:[],seenPhrases:[]};
+function loadS(){try{const r=localStorage.getItem(LS);if(r){const p=JSON.parse(r);S={...S,...p};}}catch(e){}}
+function saveS(){localStorage.setItem(LS,JSON.stringify(S));}
 
-// ═══════════════════════════════════════════════
-// STREAK — run first so S.days is correct
-// ═══════════════════════════════════════════════
 (function(){
   const today=new Date().toISOString().slice(0,10);
   if(S.lastDate!==today){
     const yest=new Date(Date.now()-86400000).toISOString().slice(0,10);
-    S.streak=S.lastDate===yest?S.streak+1:1;
-    S.lastDate=today;S.days++;S.seenDates[today]=true;save();
+    S.streak=(S.lastDate===yest)?S.streak+1:1;
+    S.lastDate=today;S.days++;S.seenDates[today]=true;saveS();
   }
 })();
 
-// ═══════════════════════════════════════════════
-// DAILY — sorted lv1→2→3, by user day count
-// ═══════════════════════════════════════════════
-let ci=0;
-const sorted=[...CHARS].sort((a,b)=>a.lv-b.lv);
-function buildDaily(){
-  if(S.stageOverride>0){
-    const pool=sorted.filter(c=>c.lv===S.stageOverride);
-    const userDay=Math.max(0,(S.days||1)-1);
-    const stageOff=(userDay*5)%pool.length;
-    return Array.from({length:5},(_,i)=>pool[(stageOff+i)%pool.length]);
-  } else {
-    const userDay=Math.max(0,(S.days||1)-1);
-    const off=(userDay*5)%sorted.length;
-    return Array.from({length:5},(_,i)=>sorted[(off+i)%sorted.length]);
-  }
+// ═══════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════
+function tab(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.querySelector('.content').scrollTop=0;
+  if(name==='menu')renderMenu();
+  if(name==='phrases')renderPhrases();
+  if(name==='quiz')initQuiz();
+  if(name==='progress')renderProgress();
 }
-let daily=buildDaily();
 
-function rCard(){
-  const c=daily[ci];
-  document.getElementById('bchar').textContent=c.ch;
-  document.getElementById('cpiny').textContent=c.py;
-  document.getElementById('cmean').textContent=c.en;
-  document.getElementById('cstk').textContent=c.stk?'Notes: '+c.stk:'';
-  document.getElementById('cex').textContent=c.ex;
-  document.getElementById('cexpy').textContent=c.expy||c.py;
-  document.getElementById('cexe').textContent=c.exe;
-  document.getElementById('ctip').textContent=c.tip?'💡 '+c.tip:'';
-  document.getElementById('cnum').textContent=String(ci+1).padStart(2,'0');
-  document.getElementById('cn').textContent=ci+1;
-  document.getElementById('cpos').textContent=ci+1;
-  document.getElementById('pf').style.width=((ci+1)/5*100)+'%';
-  document.getElementById('pb').disabled=ci===0;
-  document.getElementById('fwb').disabled=ci===4;
-  document.getElementById('fwb').textContent=ci===4?'✓ Done':'Next →';
-  const lbls={1:'STAGE 1 · CORE WORDS',2:'STAGE 2 · COMBINATIONS',3:'STAGE 3 · FULL DISH NAMES'};
-  const cls={1:'l1',2:'l2',3:'l3'};
-  const lv=document.getElementById('clvl');
-  lv.textContent=lbls[c.lv]||'STAGE '+c.lv;
-  lv.className='lvb '+(cls[c.lv]||'l3');
-  initHanziWriter(c.ch);
-}
-function chg(d){ci=Math.max(0,Math.min(4,ci+d));rCard();}
-function spkCur(){spk(daily[ci].ch);}
-
-// ═══════════════════════════════════════════════
-// SPEECH — Korean
-// ═══════════════════════════════════════════════
-function spk(t){
-  if(!window.speechSynthesis){toast('Speech not supported');return;}
+// ═══════════════════════════════════════
+// SPEECH
+// ═══════════════════════════════════════
+function spk(text){
+  if(!window.speechSynthesis)return;
   speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
-  u.lang='ko-KR';u.rate=0.85;
-  const vs=speechSynthesis.getVoices();
-  const v=vs.find(x=>x.lang==='ko-KR')||vs.find(x=>x.lang.startsWith('ko'));
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ko-KR';u.rate=0.82;
+  const voices=speechSynthesis.getVoices();
+  const v=voices.find(x=>x.lang==='ko-KR')||voices.find(x=>x.lang.startsWith('ko'));
   if(v)u.voice=v;
   speechSynthesis.speak(u);
-  toast('🔊 '+t);
+  if(!S.seenMenu.includes(text)){S.seenMenu.push(text);saveS();}
 }
 if(window.speechSynthesis)speechSynthesis.addEventListener('voiceschanged',()=>{});
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 // QUIZ
-// ═══════════════════════════════════════════════
-let qDone=false;
-function nxtQ(){
-  qDone=false;
-  const c=CHARS[Math.floor(Math.random()*CHARS.length)];
-  document.getElementById('qch').textContent=c.ch;
-  document.getElementById('qpy').textContent=c.py;
-  document.getElementById('qfb').textContent='';
-  const opts=[c];
-  let tries=0;
-  while(opts.length<4&&tries<80){
-    const r=CHARS[Math.floor(Math.random()*CHARS.length)];
-    if(!opts.some(o=>o.en===r.en))opts.push(r);
-    tries++;
+// ═══════════════════════════════════════
+let quizMode='meaning';
+let quizCurrent=null;
+let quizAnswered=false;
+
+function setQuizMode(mode,btn){
+  quizMode=mode;
+  document.querySelectorAll('.qmode').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  nextQuiz();
+}
+
+function allItems(){return MENU.flatMap(c=>c.items);}
+
+function initQuiz(){if(!quizCurrent)nextQuiz();}
+
+function nextQuiz(){
+  quizAnswered=false;
+  document.getElementById('qFb').textContent='';
+  document.querySelectorAll('.qopt').forEach(o=>{o.classList.remove('ok','no');});
+  const pool=allItems();
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  quizCurrent=q;
+  const charEl=document.getElementById('qChar');
+  const romEl=document.getElementById('qRom');
+  const promptEl=document.getElementById('qPrompt');
+  charEl.style.fontSize='';
+  if(quizMode==='meaning'){
+    charEl.textContent=q.ch;romEl.textContent=q.rom;promptEl.textContent='What does this mean?';
+  } else if(quizMode==='reading'){
+    charEl.textContent=q.en;charEl.style.fontSize='24px';romEl.textContent='';promptEl.textContent='How do you say this in Korean?';
+  } else {
+    charEl.textContent='🔊';charEl.style.fontSize='72px';romEl.textContent='';promptEl.textContent='Listen and choose the correct meaning';
+    setTimeout(()=>spk(q.ch),300);
   }
-  opts.sort(()=>Math.random()-.5);
-  const el=document.getElementById('qopts');el.innerHTML='';
+  const wrong=pool.filter(x=>x.ch!==q.ch&&x.en!==q.en).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[...wrong,q].sort(()=>Math.random()-.5);
+  const el=document.getElementById('qOpts');el.innerHTML='';
   opts.forEach(o=>{
-    const b=document.createElement('button');b.className='qopt';b.textContent=o.en;
-    b.onclick=()=>{
-      if(qDone)return;qDone=true;S.qT++;
-      if(o.en===c.en){b.classList.add('ok');S.qR++;document.getElementById('qfb').textContent='Correct! '+c.en;document.getElementById('qfb').style.color='#27ae60';}
-      else{b.classList.add('no');document.getElementById('qfb').textContent='It is "'+c.en+'"';document.getElementById('qfb').style.color='#c0392b';[...el.children].forEach(x=>{if(x.textContent===c.en)x.classList.add('ok');});}
-      document.getElementById('qsc').textContent=S.qR;document.getElementById('qtot').textContent=S.qT;save();
-    };
+    const b=document.createElement('button');b.className='qopt';
+    if(quizMode==='reading'){
+      b.innerHTML='<span style="font-family:\'Noto Serif KR\',serif;font-size:18px">'+o.ch+'</span><br><span style="font-size:10px;color:var(--ink3)">'+o.rom+'</span>';
+    } else {b.textContent=o.en;}
+    b.onclick=()=>checkQuiz(o.ch===q.ch,b,q);
     el.appendChild(b);
   });
 }
 
-// ═══════════════════════════════════════════════
+function checkQuiz(correct,btn,q){
+  if(quizAnswered)return;
+  quizAnswered=true;S.qTotal++;
+  document.querySelectorAll('.qopt').forEach(o=>o.onclick=null);
+  const fb=document.getElementById('qFb');
+  if(correct){
+    btn.classList.add('ok');S.qCorrect++;
+    fb.textContent='✓ Correct!';fb.style.color='#2e7d32';
+  } else {
+    btn.classList.add('no');
+    fb.textContent='✗ The answer was: '+q.en;fb.style.color='var(--red)';
+    document.querySelectorAll('.qopt').forEach(o=>{
+      if(quizMode==='reading'){if(o.querySelector('span')&&o.querySelector('span').textContent===q.ch)o.classList.add('ok');}
+      else{if(o.textContent===q.en)o.classList.add('ok');}
+    });
+  }
+  saveS();
+  document.getElementById('qCorrect').textContent=S.qCorrect;
+  document.getElementById('qTotal').textContent=S.qTotal;
+  setTimeout(nextQuiz,1400);
+}
+
+function spkQuiz(){if(quizCurrent)spk(quizCurrent.ch);}
+
+// ═══════════════════════════════════════
 // MENU
-// ═══════════════════════════════════════════════
-const cats=['All',...new Set(CHARS.map(c=>c.cat))];
-let aCat='All';
-function rCatTabs(){
-  document.getElementById('ctabs').innerHTML='';
-  cats.forEach(c=>{const b=document.createElement('button');b.className='ctab'+(c===aCat?' on':'');b.textContent=c;b.onclick=()=>{aCat=c;rCatTabs();rMenu();};document.getElementById('ctabs').appendChild(b);});
-}
-function rMenu(){
-  const q=(document.getElementById('msrch').value||'').toLowerCase();
-  const items=CHARS.filter(c=>{
-    const catOk=aCat==='All'||c.cat===aCat;
-    const srOk=!q||c.ch.includes(q)||c.en.toLowerCase().includes(q)||c.py.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q);
-    return catOk&&srOk;
+// ═══════════════════════════════════════
+let activeCat='All';let menuRendered=false;
+function renderMenu(filter){
+  filter=(filter||'').toLowerCase();
+  const catTabsEl=document.getElementById('catTabs');
+  const grid=document.getElementById('menuGrid');
+  if(!menuRendered){
+    const allCats=['All',...MENU.map(c=>c.cat)];
+    catTabsEl.innerHTML='';
+    allCats.forEach(c=>{
+      const b=document.createElement('button');b.className='ctab'+(c===activeCat?' on':'');b.textContent=c;
+      b.onclick=()=>{activeCat=c;document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderMenu(document.getElementById('menuSearch').value);};
+      catTabsEl.appendChild(b);
+    });
+    menuRendered=true;
+  }
+  grid.innerHTML='';let count=0;
+  MENU.forEach(cat=>{
+    if(activeCat!=='All'&&cat.cat!==activeCat)return;
+    cat.items.forEach(item=>{
+      const match=!filter||item.ch.includes(filter)||item.rom.toLowerCase().includes(filter)||item.en.toLowerCase().includes(filter)||(item.desc&&item.desc.toLowerCase().includes(filter));
+      if(!match)return;
+      count++;
+      const d=document.createElement('div');d.className='mi';
+      const safe=item.ch.replace(/'/g,"\\'");
+      const tagMap={tv:'🌿 Veg',th:'🌶️ Spicy',tp:'⭐ Popular',ts:'🐟 Seafood'};
+      const tag=item.tag?`<span class="mtag ${item.tag}">${tagMap[item.tag]||''}</span>`:'';
+      d.innerHTML=`<div class="mchar">${item.ch}</div>
+        <div class="minfo"><div class="mrom">${item.rom}</div><div class="men">${item.en}</div><div class="mdesc">${item.desc||''}${tag}</div></div>
+        <button class="mspk" onclick="event.stopPropagation();spk('${safe}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>`;
+      d.onclick=()=>spk(item.ch);grid.appendChild(d);
+    });
   });
-  document.getElementById('mcount').textContent=items.length;
-  const g=document.getElementById('mgrid');g.innerHTML='';
-  items.forEach(c=>{
-    const div=document.createElement('div');div.className='mi';
-    const safe=c.ch.replace(/'/g,"\\'");
-    const tag=getTag(c);
-    div.innerHTML=`<div class="mchar">${c.ch}</div>
-    <div class="minfo"><div class="mpinyin">${c.py}</div><div class="men">${c.en}</div><div class="mdesc">${c.desc}</div>${tag}</div>
-    <button class="sspk" onclick="event.stopPropagation();spk('${safe}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>`;
-    div.onclick=()=>spk(c.ch);g.appendChild(div);
-  });
-  if(!items.length)g.innerHTML='<p style="font-size:13px;color:var(--muted);padding:1rem">No results found.</p>';
+  document.getElementById('menuCount').textContent=count+' items';
 }
-function getTag(c){
-  if(/Vegetable|Tofu|Spinach|Bean Sprout|Kimchi|Mushroom/i.test(c.en))return '<span class="mtag tv">🌿 Veg-friendly</span>';
-  if(/Spicy|Gochujang|Fiery/i.test(c.en)||/맵/i.test(c.ch))return '<span class="mtag th">🌶️ Spicy</span>';
-  if(/Fish|Seafood|Prawn|Squid|Clam|Crab|Octopus/i.test(c.en))return '<span class="mtag ts">🐟 Seafood</span>';
-  if(/Bibimbap|Bulgogi|Pork Belly|Kimchi Stew|Fried Chicken|Army Stew/i.test(c.en))return '<span class="mtag tp">⭐ Popular</span>';
-  return '';
-}
+function filterMenu(){renderMenu(document.getElementById('menuSearch').value);}
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 // PHRASES
-// ═══════════════════════════════════════════════
-const pCats=Object.keys(PHRASES);let aPCat=pCats[0];
-function rPCats(){
-  document.getElementById('ptabs').innerHTML='';
-  pCats.forEach(c=>{const b=document.createElement('button');b.className='ptab'+(c===aPCat?' on':'');b.textContent=c;b.onclick=()=>{aPCat=c;rPCats();rPhrases();};document.getElementById('ptabs').appendChild(b);});
+// ═══════════════════════════════════════
+let activePhrCat=Object.keys(PHRASES)[0];let phraseTabsRendered=false;
+function renderPhrases(){
+  const tabsEl=document.getElementById('phraseTabs');
+  if(!phraseTabsRendered){
+    Object.keys(PHRASES).forEach(cat=>{
+      const b=document.createElement('button');b.className='ptab'+(cat===activePhrCat?' on':'');b.textContent=cat;
+      b.onclick=()=>{activePhrCat=cat;document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderPhraseList();};
+      tabsEl.appendChild(b);
+    });
+    phraseTabsRendered=true;
+  }
+  renderPhraseList();
 }
-function rPhrases(){
-  const list=document.getElementById('plist');list.innerHTML='';
-  (PHRASES[aPCat]||[]).forEach(p=>{
+function renderPhraseList(){
+  const listEl=document.getElementById('phraseList');listEl.innerHTML='';
+  (PHRASES[activePhrCat]||[]).forEach(p=>{
     const d=document.createElement('div');d.className='pcard';
-    const safe=p.cn.replace(/'/g,"\\'");
-    d.innerHTML=`<div class="pcn" onclick="spk('${safe}')">${p.cn}</div>
-    <div class="pdet"><div class="ppy">${p.py}</div><div class="pen">${p.en}</div></div>
-    <button class="sspk" onclick="spk('${safe}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>`;
-    list.appendChild(d);
+    const safe=p.jp.replace(/'/g,"\\'");
+    d.innerHTML=`<div class="pcn" onclick="spk('${safe}')">${p.jp}</div>
+      <div class="pdet"><div class="prom">${p.rom}</div><div class="pen">${p.en}</div></div>
+      <button class="pspk" onclick="spk('${safe}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>`;
+    d.onclick=()=>spk(p.jp);listEl.appendChild(d);
+    if(!S.seenPhrases.includes(p.jp)){S.seenPhrases.push(p.jp);saveS();}
   });
 }
 
-// ═══════════════════════════════════════════════
-// ═══════════════════════════════════════════════
-// HANGUL STROKE GUIDE — animated
-// ═══════════════════════════════════════════════
-const JAMO_STROKES = {
-  'ㄱ':{name:'Giyeok (g/k)',s:[[20,20,80,20],[80,20,80,80]]},
-  'ㄴ':{name:'Nieun (n)',s:[[25,20,25,80],[25,80,80,80]]},
-  'ㄷ':{name:'Digeut (d/t)',s:[[20,20,80,20],[80,20,80,80],[20,80,80,80]]},
-  'ㄹ':{name:'Rieul (r/l)',s:[[20,15,75,15],[75,15,75,48],[20,48,75,48],[20,48,20,82],[20,82,80,82]]},
-  'ㅁ':{name:'Mieum (m)',s:[[20,20,20,80],[20,20,80,20],[80,20,80,80],[20,80,80,80]]},
-  'ㅂ':{name:'Bieup (b/p)',s:[[20,20,20,80],[80,20,80,80],[20,20,80,20],[20,50,80,50],[20,80,80,80]]},
-  'ㅅ':{name:'Siot (s)',s:[[50,15,20,80],[50,15,80,80]]},
-  'ㅇ':{name:'Ieung (silent)',s:[{type:'arc',cx:50,cy:50,r:32}]},
-  'ㅈ':{name:'Jieut (j)',s:[[20,25,80,25],[50,25,20,80],[50,25,80,80]]},
-  'ㅊ':{name:'Chieut (ch)',s:[[35,12,65,12],[20,30,80,30],[50,30,20,80],[50,30,80,80]]},
-  'ㅋ':{name:'Kieuk (k)',s:[[20,20,80,20],[80,20,80,80],[20,52,80,52]]},
-  'ㅌ':{name:'Tieut (t)',s:[[20,20,80,20],[80,20,80,80],[20,50,80,50],[20,80,80,80]]},
-  'ㅍ':{name:'Pieup (p)',s:[[20,25,20,75],[20,25,80,25],[80,25,80,75],[20,75,80,75]]},
-  'ㅎ':{name:'Hieut (h)',s:[[38,12,62,12],[{type:'arc',cx:50,cy:55,r:28}],[20,55,80,55]]},
-  'ㄲ':{name:'Ssang-giyeok',s:[[15,20,45,20],[45,20,45,80],[55,20,85,20],[85,20,85,80]]},
-  'ㄸ':{name:'Ssang-digeut',s:[[10,20,45,20],[45,20,45,80],[10,80,45,80],[55,20,90,20],[90,20,90,80],[55,80,90,80]]},
-  'ㅏ':{name:'A (ah)',s:[[50,10,50,90],[50,50,85,50]]},
-  'ㅓ':{name:'Eo (uh)',s:[[50,10,50,90],[50,50,15,50]]},
-  'ㅗ':{name:'O (oh)',s:[[10,60,90,60],[50,60,50,15]]},
-  'ㅜ':{name:'U (oo)',s:[[10,40,90,40],[50,40,50,85]]},
-  'ㅡ':{name:'Eu',s:[[10,50,90,50]]},
-  'ㅣ':{name:'I (ee)',s:[[50,10,50,90]]},
-  'ㅐ':{name:'Ae (eh)',s:[[35,10,35,90],[35,50,10,50],[65,10,65,90]]},
-  'ㅔ':{name:'E (eh)',s:[[35,10,35,90],[35,50,65,50],[65,10,65,90]]},
-  'ㅑ':{name:'Ya',s:[[50,10,50,90],[50,33,85,33],[50,65,85,65]]},
-  'ㅕ':{name:'Yeo',s:[[50,10,50,90],[50,33,15,33],[50,65,15,65]]},
-  'ㅛ':{name:'Yo',s:[[10,60,90,60],[33,60,33,15],[67,60,67,15]]},
-  'ㅠ':{name:'Yu',s:[[10,40,90,40],[33,40,33,85],[67,40,67,85]]},
-};
-
-function decomposeHangul(char) {
-  var code=char.charCodeAt(0);
-  if(code<0xAC00||code>0xD7A3)return[char];
-  var offset=code-0xAC00, jong=offset%28, jung=((offset-jong)/28)%21, cho=Math.floor(offset/28/21);
-  var cL=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-  var jL=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-  var nL=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-  var r=[cL[cho],jL[jung]]; if(nL[jong])r.push(nL[jong]); return r;
-}
-
-function getAllSyllables(word) {
-  var r=[];
-  for(var i=0;i<word.length;i++){var c=word.charCodeAt(i);if(c>=0xAC00&&c<=0xD7A3)r.push(word[i]);}
-  return r.length>0?r:[word[0]];
-}
-
-function getFirstSyllable(word){return getAllSyllables(word)[0]||word[0];}
-
-// ── Build a flat list of all stroke segments for animation ───────────────────
-function buildStrokeList(char) {
-  var syllables=getAllSyllables(char).slice(0,3);
-  var W=220,H=220,pad=6;
-  var vertVowels='ㅏㅓㅐㅔㅑㅕㅒㅖㅣ';
-  var sylW=Math.floor((W-pad*2-(syllables.length-1)*3)/syllables.length);
-  var strokes=[];
-
-  function getBoxes(jamo,colX){
-    var vowel=jamo.length>=2?jamo[1]:'';
-    var iv=vertVowels.indexOf(vowel)>=0;
-    var cH=H-pad*2;
-    if(jamo.length===1)return[{x:colX,y:pad,w:sylW,h:cH}];
-    if(jamo.length===2){
-      if(iv)return[{x:colX,y:pad,w:sylW*0.42,h:cH},{x:colX+sylW*0.42,y:pad,w:sylW*0.58,h:cH}];
-      return[{x:colX,y:pad,w:sylW,h:cH*0.47},{x:colX,y:pad+cH*0.47,w:sylW,h:cH*0.53}];
-    }
-    if(iv)return[{x:colX,y:pad,w:sylW*0.42,h:cH*0.58},{x:colX+sylW*0.42,y:pad,w:sylW*0.58,h:cH*0.58},{x:colX,y:pad+cH*0.58,w:sylW,h:cH*0.42}];
-    return[{x:colX,y:pad,w:sylW,h:cH*0.30},{x:colX,y:pad+cH*0.30,w:sylW,h:cH*0.34},{x:colX,y:pad+cH*0.64,w:sylW,h:cH*0.36}];
-  }
-
-  syllables.forEach(function(syl,si){
-    var colX=pad+si*(sylW+3);
-    var jamo=decomposeHangul(syl);
-    var boxes=getBoxes(jamo,colX);
-    jamo.forEach(function(j,ji){
-      var b=boxes[ji]; if(!b)return;
-      var data=JAMO_STROKES[j]; if(!data)return;
-      data.s.forEach(function(s,si2){
-        function bpx(p){return b.x+p/100*b.w;}
-        function bpy(p){return b.y+p/100*b.h;}
-        if(s&&s.type==='arc'){
-          strokes.push({type:'arc',cx:bpx(s.cx),cy:bpy(s.cy),r:s.r/100*Math.min(b.w,b.h),num:si2+1,jamo:j,box:b});
-        } else if(Array.isArray(s)){
-          strokes.push({type:'line',x1:bpx(s[0]),y1:bpy(s[1]),x2:bpx(s[2]),y2:bpy(s[3]),num:si2+1,jamo:j,box:b});
-        }
-      });
-    });
-  });
-  return strokes;
-}
-
-// ── Animation state ──────────────────────────────────────────────────────────
-var _animChar='', _animStrokes=[], _animIdx=0, _animFrame=null, _animProgress=0;
-var ANIM_STEPS=40, PAUSE_MS=320;
-
-function drawBackground(ctx,char){
-  var W=220,H=220,pad=6;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='#e0d8c8'; ctx.lineWidth=1; ctx.strokeRect(1,1,W-2,H-2);
-
-  // Column dividers
-  var syllables=getAllSyllables(char).slice(0,3);
-  if(syllables.length>1){
-    var sylW=Math.floor((W-pad*2-(syllables.length-1)*3)/syllables.length);
-    for(var i=1;i<syllables.length;i++){
-      var divX=pad+i*(sylW+3)-1;
-      ctx.strokeStyle='#d8d0c0'; ctx.lineWidth=0.8;
-      ctx.beginPath(); ctx.moveTo(divX,pad); ctx.lineTo(divX,H-pad); ctx.stroke();
-    }
-  }
-}
-
-function drawCompletedStroke(ctx, s) {
-  ctx.strokeStyle='#1B3A6B'; ctx.lineWidth=4; ctx.lineCap='round';
-  if(s.type==='arc'){
-    ctx.beginPath(); ctx.arc(s.cx,s.cy,s.r,Math.PI*0.25,Math.PI*0.25+Math.PI*1.9,false); ctx.stroke();
-    var ea=Math.PI*0.25+Math.PI*1.9;
-    drawArrowHead(ctx,s.cx+s.r*Math.cos(ea),s.cy+s.r*Math.sin(ea),ea+Math.PI/2);
-    drawNumBadge(ctx,s.cx+s.r*Math.cos(Math.PI*0.25),s.cy+s.r*Math.sin(Math.PI*0.25),s.num,Math.PI*0.25);
-  } else {
-    ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(s.x2,s.y2); ctx.stroke();
-    var a=Math.atan2(s.y2-s.y1,s.x2-s.x1);
-    var t=0.7,mx=s.x1+t*(s.x2-s.x1),my=s.y1+t*(s.y2-s.y1);
-    var px2=mx-Math.sin(a)*14,py2=my+Math.cos(a)*14;
-    ctx.strokeStyle='#C0392B'; ctx.lineWidth=2.5;
-    ctx.beginPath(); ctx.moveTo(px2,py2); ctx.lineTo(px2+11*Math.cos(a),py2+11*Math.sin(a)); ctx.stroke();
-    drawArrowHead(ctx,px2+11*Math.cos(a),py2+11*Math.sin(a),a);
-    drawNumBadge(ctx,s.x1,s.y1,s.num,a);
-  }
-}
-
-function drawArrowHead(ctx,x2,y2,angle){
-  ctx.fillStyle='#C0392B';
-  ctx.beginPath();
-  ctx.moveTo(x2,y2);
-  ctx.lineTo(x2-10*Math.cos(angle-0.42),y2-10*Math.sin(angle-0.42));
-  ctx.lineTo(x2-10*Math.cos(angle+0.42),y2-10*Math.sin(angle+0.42));
-  ctx.closePath(); ctx.fill();
-}
-
-function drawNumBadge(ctx,x,y,num,angle){
-  var off=11, ox=x-Math.sin(angle)*off, oy=y+Math.cos(angle)*off;
-  ctx.fillStyle='#D4A847';
-  ctx.beginPath(); ctx.arc(ox,oy,8,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#1B3A6B'; ctx.font='bold 9px sans-serif';
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(String(num),ox,oy);
-}
-
-function drawPartialStroke(ctx, s, progress) {
-  ctx.strokeStyle='#2E5BA8'; ctx.lineWidth=4; ctx.lineCap='round';
-  if(s.type==='arc'){
-    var startA=Math.PI*0.25, endA=Math.PI*0.25+Math.PI*1.9*progress;
-    ctx.beginPath(); ctx.arc(s.cx,s.cy,s.r,startA,endA,false); ctx.stroke();
-    // Moving dot at tip
-    ctx.fillStyle='#2E5BA8';
-    ctx.beginPath(); ctx.arc(s.cx+s.r*Math.cos(endA),s.cy+s.r*Math.sin(endA),5,0,Math.PI*2); ctx.fill();
-  } else {
-    var px=s.x1+(s.x2-s.x1)*progress, py=s.y1+(s.y2-s.y1)*progress;
-    ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(px,py); ctx.stroke();
-    // Moving dot at tip
-    ctx.fillStyle='#2E5BA8';
-    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
-  }
-}
-
-function animStep(){
-  var canvas=document.getElementById('strokeCanvas'); if(!canvas)return;
-  var ctx=canvas.getContext('2d');
-  _animProgress+=1/ANIM_STEPS;
-  if(_animProgress>=1){
-    _animProgress=0;
-    // Redraw all completed strokes so far
-    drawBackground(ctx,_animChar);
-    for(var i=0;i<=_animIdx;i++) drawCompletedStroke(ctx,_animStrokes[i]);
-    _animIdx++;
-    if(_animIdx>=_animStrokes.length){
-      // Done — update hint
-      var hint=document.getElementById('strokeHint');
-      if(hint)hint.textContent='Tap Play again to replay';
-      return;
-    }
-    // Pause between strokes
-    setTimeout(function(){_animFrame=requestAnimationFrame(animStep);},PAUSE_MS);
-  } else {
-    drawBackground(ctx,_animChar);
-    for(var i=0;i<_animIdx;i++) drawCompletedStroke(ctx,_animStrokes[i]);
-    drawPartialStroke(ctx,_animStrokes[_animIdx],_animProgress);
-    _animFrame=requestAnimationFrame(animStep);
-  }
-}
-
-function startAnimation(char){
-  if(_animFrame){cancelAnimationFrame(_animFrame);_animFrame=null;}
-  _animChar=char;
-  _animStrokes=buildStrokeList(char);
-  _animIdx=0; _animProgress=0;
-  var canvas=document.getElementById('strokeCanvas'); if(!canvas)return;
-  canvas.width=220; canvas.height=220;
-  var ctx=canvas.getContext('2d');
-  drawBackground(ctx,char);
-  var hint=document.getElementById('strokeHint');
-  if(hint)hint.textContent='Drawing strokes…';
-  setTimeout(function(){_animFrame=requestAnimationFrame(animStep);},400);
-  // Info panel
-  var info=document.getElementById('strokeInfo');
-  if(info){
-    var syllables=getAllSyllables(char).slice(0,3);
-    var allJamo=[];
-    syllables.forEach(function(s){allJamo=allJamo.concat(decomposeHangul(s));});
-    var html='<div id="strokeHint" style="font-size:11px;color:var(--blue);margin-bottom:4px">Drawing strokes…</div>';
-    html+='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:3px">';
-    allJamo.forEach(function(j){
-      var d=JAMO_STROKES[j];
-      html+='<span style="padding:2px 8px;background:white;border:1px solid var(--bdr);border-radius:20px">'
-           +'<span style="font-family:Noto Serif KR,serif;font-size:14px;color:var(--ink)">'+j+'</span>'
-           +' <span style="font-size:10px;color:var(--blue)">'+(d?d.name:j)+'</span></span>';
-    });
-    html+='</div><div style="font-size:10px;color:var(--muted);text-align:center">Gold = stroke start · Red = direction</div>';
-    info.innerHTML=html;
-  }
-}
-
-function replayAnimation(){startAnimation(_animChar);}
-
-function showAllStrokes(){
-  if(_animFrame){cancelAnimationFrame(_animFrame);_animFrame=null;}
-  var canvas=document.getElementById('strokeCanvas'); if(!canvas)return;
-  var ctx=canvas.getContext('2d');
-  drawBackground(ctx,_animChar);
-  _animStrokes.forEach(function(s){drawCompletedStroke(ctx,s);});
-  var hint=document.getElementById('strokeHint');
-  if(hint)hint.textContent='All strokes shown · Tap Play to animate';
-}
-
-function initHanziWriter(char) {
-  setTimeout(function(){ startAnimation(char); }, 300);
-}
-
-
-
-// ═══════════════════════════════════════════════
-// STAGE SELECTOR
-// ═══════════════════════════════════════════════
-function setStage(n){
-  S.stageOverride=n;save();
-  daily=buildDaily();ci=0;rCard();updateStageButtons();
-  const labels={0:'Auto-progress mode',1:'Stage 1 — Core Words',2:'Stage 2 — Combinations',3:'Stage 3 — Full Dish Names'};
-  toast('📚 '+labels[n]);
-}
-function updateStageButtons(){
-  [0,1,2,3].forEach(n=>{
-    const btn=document.getElementById('sb'+n);
-    if(btn)btn.classList.toggle('on',S.stageOverride===n);
-  });
-}
-
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 // PROGRESS
-// ═══════════════════════════════════════════════
-function rProg(){
-  const pct=S.qT?Math.round(S.qR/S.qT*100):0;
-  document.getElementById('sd').textContent=S.days;
-  document.getElementById('sch').textContent=Object.keys(S.seenDates).length*5;
-  document.getElementById('spct').textContent=pct+'%';
-  document.getElementById('sstr').textContent=S.streak;
-  const g=document.getElementById('lg');g.innerHTML='';
-  daily.forEach(c=>{
-    const d=document.createElement('div');
-    d.style.cssText='padding:10px 12px;background:white;border:1px solid var(--bdr);border-radius:10px;text-align:center;cursor:pointer;max-width:120px';
-    d.innerHTML='<div style="font-family:Noto Serif KR,serif;font-size:18px;line-height:1.3">'+c.ch+'</div><div style="font-size:10px;color:var(--blue);margin-top:3px">'+c.py+'</div>';
-    d.onclick=()=>spk(c.ch);g.appendChild(d);
-  });
+// ═══════════════════════════════════════
+function renderProgress(){
+  const totalMenu=MENU.reduce((a,c)=>a+c.items.length,0);
+  const totalPhr=Object.values(PHRASES).reduce((a,c)=>a+c.length,0);
+  const seenM=S.seenMenu.length,seenP=S.seenPhrases.length;
+  const acc=S.qTotal>0?Math.round(S.qCorrect/S.qTotal*100)+'%':'—';
+  document.getElementById('pDays').textContent=S.days;
+  document.getElementById('pStreak').textContent=S.streak;
+  document.getElementById('pAcc').textContent=acc;
+  document.getElementById('pSeen').textContent=seenM;
+  document.getElementById('pMenuFrac').textContent=seenM+'/'+totalMenu;
+  document.getElementById('pMenuBar').style.width=(seenM/totalMenu*100)+'%';
+  document.getElementById('pPhrFrac').textContent=seenP+'/'+totalPhr;
+  document.getElementById('pPhrBar').style.width=(seenP/totalPhr*100)+'%';
+  document.getElementById('sc').textContent=S.streak;
 }
-function resetP(){
+function confirmReset(){
   if(!confirm('Reset all progress?'))return;
-  S={streak:0,lastDate:'',seenDates:{},qR:0,qT:0,days:0,stageOverride:0};save();rProg();
-  document.getElementById('qsc').textContent='0';document.getElementById('qtot').textContent='0';document.getElementById('sc').textContent='0';
-  updateStageButtons();toast('Progress reset');
+  localStorage.removeItem(LS);location.reload();
 }
 
-// ═══════════════════════════════════════════════
-// STREAK UI & NAV
-// ═══════════════════════════════════════════════
-function updateStreak(){document.getElementById('sc').textContent=S.streak;}
-function tab(name,btn){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='quiz')nxtQ();
-  if(name==='progress')rProg();
-}
-function toast(m){
-  const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200);
-}
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200);}
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════
-document.getElementById('dlbl').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-updateStreak();rCard();rCatTabs();rMenu();rPCats();rPhrases();updateStageButtons();
-// Unregister any old service worker
-if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(regs=>{regs.forEach(r=>r.unregister());});}
+// ═══════════════════════════════════════
+if('serviceWorker' in navigator)navigator.serviceWorker.getRegistrations().then(r=>r.forEach(reg=>reg.unregister()));
+loadS();
+document.getElementById('sc').textContent=S.streak;
+renderMenu();
 </script>
 </body>
 </html>
